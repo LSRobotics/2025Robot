@@ -20,7 +20,7 @@ public final class Constants {
     public static final int kDriverControllerPort = 0;
   }
   public static class ElevatorConstants {
-    public static final int kMotorID = 0;
+    public static final int kMotorID = 3;
     public static final double kMotorCircumference = 0;
     // chatgpt
     public static final double kP = 0.5;   // Strong correction

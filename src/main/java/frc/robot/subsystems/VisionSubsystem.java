@@ -47,4 +47,17 @@ public class VisionSubsystem extends SubsystemBase {
     }
     throw new NoSuchTargetException("No target with ID " + id + " is in view!");
   }
+
+  public RawFiducial getClosestFiducial(){
+    double min = Double.POSITIVE_INFINITY;
+    RawFiducial minTag = null;
+    for (RawFiducial fiducial:fiducials){
+      if (fiducial.distToRobot<min){
+        min = fiducial.distToRobot;
+        minTag = fiducial;
+      }
+    }
+    return minTag;
+  }
+
 }

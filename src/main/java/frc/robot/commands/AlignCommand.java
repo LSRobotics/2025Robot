@@ -42,7 +42,7 @@ public class AlignCommand extends Command {
     RawFiducial fiducial;
 
     try {
-      fiducial = m_Limelight.getFiducialWithId(10);
+      fiducial = m_Limelight.getFiducialWithId(5);
       System.out.println(fiducial.distToRobot);
 
       final double rotationalRate = rotationalPidController.calculate(2*fiducial.txnc, 0.0) * 0.75* 0.9;

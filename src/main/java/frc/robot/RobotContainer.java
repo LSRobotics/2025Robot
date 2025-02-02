@@ -9,12 +9,15 @@ import static edu.wpi.first.units.Units.*;
 import java.util.function.DoubleSupplier;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
+import com.ctre.phoenix6.Orchestra;
+import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.AlignCommand;
 import frc.robot.commands.Autos;
 import frc.robot.commands.ExampleCommand;
+import frc.robot.commands.playMusicCommand;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.ExampleSubsystem;
@@ -68,6 +71,7 @@ public class RobotContainer {
       private SendableChooser<Command> autoChooser;
 
    public RobotContainer() {
+
        autoChooser = AutoBuilder.buildAutoChooser("Tests");
        SmartDashboard.putData("Auto Mode", autoChooser);
        
@@ -77,6 +81,8 @@ public class RobotContainer {
       SmartDashboard.putData("Auto Mode", autoChooser);
 
        configureBindings();
+
+       
    }
    public Command getAutonomousCommand() {
      // An example command will be run in autonomous
@@ -108,6 +114,7 @@ public class RobotContainer {
         joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
         joystick.x().whileTrue(new AlignCommand(drivetrain, m_Vision));
+        joystick.y().toggleOnTrue(new playMusicCommand());
 
         // reset the field-centric heading on left bumper press
         joystick.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));

@@ -14,14 +14,12 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.commands.AlignCommand;
 import frc.robot.commands.Autos;
 import frc.robot.commands.ExampleCommand;
 import frc.robot.commands.playMusicCommand;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.ExampleSubsystem;
-import frc.robot.subsystems.VisionSubsystem;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
@@ -49,8 +47,6 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
 
-  private final VisionSubsystem m_Vision;
-
     private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
     private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
 
@@ -75,8 +71,6 @@ public class RobotContainer {
        autoChooser = AutoBuilder.buildAutoChooser("Tests");
        SmartDashboard.putData("Auto Mode", autoChooser);
        
-      m_Vision = new VisionSubsystem();
-
       autoChooser = AutoBuilder.buildAutoChooser("Tests");
       SmartDashboard.putData("Auto Mode", autoChooser);
 
@@ -113,7 +107,6 @@ public class RobotContainer {
         joystick.start().and(joystick.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
         joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
-        joystick.x().whileTrue(new AlignCommand(drivetrain, m_Vision));
         joystick.y().toggleOnTrue(new playMusicCommand());
 
         // reset the field-centric heading on left bumper press
@@ -125,11 +118,6 @@ public class RobotContainer {
 
     public void robotInit()
   {
-      // Make sure you only configure port forwarding once in your robot code.
-      // Do not place these function calls in any periodic functions
-      for (int port = 5800; port <= 5809; port++) {
-          PortForwarder.add(port, "limelight.local", port);
-      }
   }
 
 

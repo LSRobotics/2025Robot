@@ -6,6 +6,8 @@ package frc.robot.commands;
 
 import frc.robot.subsystems.ExampleSubsystem;
 
+import javax.net.ssl.SSLEngineResult.Status;
+
 import com.ctre.phoenix6.Orchestra;
 import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -23,20 +25,26 @@ public class playMusicCommand extends Command {
    */
 
    private final Orchestra m_Orchestra;
-   private final StatusCode status;
+   private int counter = 0;
+
+   private final String[] songPaths = {"music/AlmaMater.chrp","music/piratesOfCaribbean.chrp"};
   public playMusicCommand() {
     m_Orchestra = new Orchestra();
     for (int i=2;i<10;i++){
     m_Orchestra.addInstrument(new TalonFX(i, "rio"));
     }
 
-    status = m_Orchestra.loadMusic("./output.chrp");
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    StatusCode status = m_Orchestra.loadMusic(songPaths[counter]);
+    if (status.isError()){
+      System.out.println(status.toString());
+    }
     m_Orchestra.play();
+    counter=(counter+1)%songPaths.length;
   }
 
   // Called every time the scheduler runs while the command is scheduled.

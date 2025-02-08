@@ -1,37 +1,51 @@
-// Copyright 2021-2025 FRC 6328
-// http://github.com/Mechanical-Advantage
-//
-// This program is free software; you can redistribute it and/or
-// modify it under the terms of the GNU General Public License
-// version 3 as published by the Free Software Foundation or
-// available in the root directory of this project.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU General Public License for more details.
-
 package frc.robot;
 
-import edu.wpi.first.wpilibj.RobotBase;
+public class Constants {
+  public static class UniversalConstants {
+    public static final String bestProgrammer = "Gabriel Kuzowsky"; 
+  }
+  public static class OperatorConstants {
+    public static final int kDriverControllerPort = 0;
+    public static final int kOperatorControllerPort = 1;
+  }
+  public static class ElevatorConstants {
+    public static final int kMotorID = 0;
+    public static final double kMotorCircumference = 0;
+    public static final double kP = 0.5;   // Strong correction
+    public static final double kI = 0.01;  // Slight accumulation
+    public static final double kD = 0.1;  // Moderate dampening
+    public static final double kTolerance = 0.05;
+  }
+  public static class LEDConstants{
+    public static final int LEDDriverOneID = 3;
+    public static final double colorRed = 0.61;
+    public static final double colorHotPink = 0.57;
+    public static final double colorYellow = 0.69;
+    public static final double colorSkyBlue = 0.83;
+    public static final double colorBlueViolet = 0.89;
+    public static final double colorWhite = 0.93;
+    public static final double colorLimeGreen = 0.73;
+    public static final double colorOrange = 0.65;
+    public static final double colorDarkGreen = 0.75;
+    public static final double colorLawnGreen = 0.71;
+    public static final double colorBlue = 0.87;
+    public static final double colorGold = 0.67;
+    public static final double twinklesColorOneAndTwo = 0.51;
+  }
 
-/**
- * This class defines the runtime mode used by AdvantageKit. The mode is always "real" when running
- * on a roboRIO. Change the value of "simMode" to switch between "sim" (physics sim) and "replay"
- * (log replay from a file).
- */
-public final class Constants {
-  public static final Mode simMode = Mode.SIM;
-  public static final Mode currentMode = RobotBase.isReal() ? Mode.REAL : simMode;
-
-  public static enum Mode {
-    /** Running on a real robot. */
-    REAL,
-
-    /** Running a physics simulator. */
-    SIM,
-
-    /** Replaying from a log file. */
-    REPLAY
+  public static class ClawConstants {
+    public static final int clawMotorID = 30;
+    public static final int shooterMotorID = 31;
+    public static final int sensorID = 62;
+    public static final double manualClawSpeed = 0.2;
+    public static final double slowShooterSpeed = 0.1;
+    public static final double fastShooterSpeed = 0.6;
+    public static final double L1ClawPosition = 15;
+    public static final double L2L3ClawPosition = 45;
+    public static final double L4ClawPosition = 90;
+    public static final double algaeClawPosition = 270;
+    public static final double kP = 0.003;
+    public static final double kD = 0.08;
+    public static final double tolerance = 2;
   }
 }

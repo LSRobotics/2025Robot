@@ -1,7 +1,7 @@
 plugins {
     id "com.peterabeles.gversion" version "1.10"
     id "java"
-    id "edu.wpi.first.GradleRIO" version "2025.1.1"
+    id "edu.wpi.first.GradleRIO" version "2025.2.1"
 }
 
 java {

@@ -41,7 +41,8 @@ public class OdometrySubsystem {
     new Rotation2d(m_turningEncoder.getDistance()));
 
    Rotation2d currentAngle = new Rotation2d(m_turningEncoder.getDistance());
-    SwerveModuleState frontLeftOptimized = SwerveModuleState.optimize(frontLeft, currentAngle)
+    public SwerveModuleState frontLeftOptimized = SwerveModuleState.optimize(frontLeft, currentAngle);
+
     frontLeftOptimized = new SwerveModuleState(
         frontLeftOptimized.speedMetersPerSecond * CfrontLeftOptimized.angle.minus(currentAngle).getCos(),
         frontLeftOptimized.angle

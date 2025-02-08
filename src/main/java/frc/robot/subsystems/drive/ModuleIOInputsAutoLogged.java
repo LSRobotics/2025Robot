@@ -1,6 +1,19 @@
 package frc.robot.subsystems.drive;
 
-public class ModuleIOInputsAutoLogged {
+import org.littletonrobotics.junction.inputs.LoggableInputs;
+import edu.wpi.first.math.geometry.Rotation2d;
+import org.littletonrobotics.junction.LogTable;
+
+public class ModuleIOInputsAutoLogged extends ModuleIO.ModuleIOInputs implements LoggableInputs {
+    @Override
+    public void toLog(LogTable table) {
+        // Implement the method to log data to the table
+    }
+
+    @Override
+    public void fromLog(LogTable table) {
+        // Implement the method to read data from the table
+    }
     // Define the fields and methods for the class
     public double[] odometryTimestamps;
     public double[] odometryDrivePositionsRad;

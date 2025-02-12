@@ -30,6 +30,8 @@ public class playMusicCommand extends Command {
     songChooser.addOption("Alma Mater (2 Parts)", songPaths[0]);
     songChooser.addOption("Pirates of the Caribbean (6 parts)", songPaths[1]);
     songChooser.addOption("Africa (4 Parts)", songPaths[2]);
+
+    songChooser.setDefaultOption("Alma Mater (2 Parts)", songPaths[0]);
     
     SmartDashboard.putData("Song Selector", songChooser);
   }

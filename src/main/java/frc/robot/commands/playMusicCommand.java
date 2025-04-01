@@ -1,6 +1,5 @@
 package frc.robot.commands;
 
-import frc.robot.Constants.ElevatorConstants;
 import frc.robot.subsystems.ExampleSubsystem;
 
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -26,7 +25,6 @@ public class playMusicCommand extends Command {
       m_Orchestra.addInstrument(new TalonFX(i, "rio"));
     }
 
-    m_Orchestra.addInstrument(new TalonFX(30, "rio")); //Shooter
     m_Orchestra.addInstrument(new TalonFX(31, "rio")); //Claw
 
     

@@ -1,6 +1,10 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
+import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.DegreesPerSecond;
+
 import com.ctre.phoenix6.hardware.Pigeon2;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.wpilibj.Notifier;
@@ -35,10 +39,10 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
         // Initialize pose estimator
         poseEstimator = new SwerveDrivePoseEstimator(
             kinematics,
-            Rotation2d.fromDegrees(gyro.getAngle()),
+            Rotation2d.fromDegrees(-gyro.getYaw().getValue().in(Degrees)),
             getModulePositions(),
             new Pose2d(),
-            VecBuilder.fill(0.05, 0.05, 0.01), 
+            VecBuilder.fill(0.1, 0.05, 0.02), 
             VecBuilder.fill(0.7, 0.7, 9999999) 
         );
 
@@ -49,7 +53,7 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         // Update odometry every cycle
-        poseEstimator.update(Rotation2d.fromDegrees(gyro.getAngle()), getModulePositions());
+        poseEstimator.update(Rotation2d.fromDegrees(-gyro.getYaw().getValue().in(Degrees)), getModulePositions());
     }
 
     private void updateVisionPose() {
@@ -59,7 +63,7 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
         lastVisionUpdate = currentTime;
         LimelightHelpers.PoseEstimate visionData = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
 
-        if (visionData.tagCount > 0 && Math.abs(gyro.getRate()) <= 360) {
+        if (visionData.tagCount > 0 && Math.abs(-gyro.getAngularVelocityZWorld().getValue().in(DegreesPerSecond)) <= 360) {
             poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(0.7, 0.7, 9999999));
             poseEstimator.addVisionMeasurement(visionData.pose, visionData.timestampSeconds);
         }

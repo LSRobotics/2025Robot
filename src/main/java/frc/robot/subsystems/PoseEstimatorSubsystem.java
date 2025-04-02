@@ -43,8 +43,8 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
             Rotation2d.fromDegrees(-gyro.getYaw().getValue().in(Degrees)),
             getModulePositions(),
             new Pose2d(),
-            VecBuilder.fill(PoseEstimationConstants.odometryXSD, PoseEstimationConstants.odometryYSD, PoseEstimationConstants.odometryRotSD), 
-            VecBuilder.fill(PoseEstimationConstants.visionXSD, PoseEstimationConstants.visionYSD, PoseEstimationConstants.visionRotSD) 
+            VecBuilder.fill(PoseEstimationConstants.odometryXStdDev, PoseEstimationConstants.odometryYStdDev, PoseEstimationConstants.odometryRotStdDev), 
+            VecBuilder.fill(PoseEstimationConstants.visionXStdDev, PoseEstimationConstants.visionYStdDev, PoseEstimationConstants.visionRotStdDev) 
         );
 
         visionNotifier = new Notifier(this::updateVisionPose);
@@ -65,7 +65,7 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
         LimelightHelpers.PoseEstimate visionData = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
 
         if (visionData.tagCount > 0 && Math.abs(-gyro.getAngularVelocityZWorld().getValue().in(DegreesPerSecond)) <= 360) {
-            VecBuilder.fill(PoseEstimationConstants.visionXSD, PoseEstimationConstants.visionYSD, PoseEstimationConstants.visionRotSD);
+            VecBuilder.fill(PoseEstimationConstants.visionXStdDev, PoseEstimationConstants.visionYStdDev, PoseEstimationConstants.visionRotStdDev);
             poseEstimator.addVisionMeasurement(visionData.pose, visionData.timestampSeconds);
         }
     }

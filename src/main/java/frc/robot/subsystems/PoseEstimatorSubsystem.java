@@ -9,6 +9,7 @@ import com.ctre.phoenix6.hardware.Pigeon2;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import frc.robot.Constants.PoseEstimationConstants;
 import frc.robot.generated.TunerConstants;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
@@ -27,13 +28,13 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
 
     public PoseEstimatorSubsystem(CommandSwerveDrivetrain swerve) {
         this.m_Swerve = swerve;
-        this.gyro = new Pigeon2(25);
+        this.gyro = new Pigeon2(PoseEstimationConstants.pigeonID);
 
         SwerveDriveKinematics kinematics = new SwerveDriveKinematics(
-            new edu.wpi.first.math.geometry.Translation2d(TunerConstants.FrontLeft.LocationX, TunerConstants.FrontLeft.LocationY),
-            new edu.wpi.first.math.geometry.Translation2d(TunerConstants.FrontRight.LocationX, TunerConstants.FrontRight.LocationY),
-            new edu.wpi.first.math.geometry.Translation2d(TunerConstants.BackLeft.LocationX, TunerConstants.BackLeft.LocationY),
-            new edu.wpi.first.math.geometry.Translation2d(TunerConstants.BackRight.LocationX, TunerConstants.BackRight.LocationY)
+            PoseEstimationConstants.frontLeftWheelLocation,
+            PoseEstimationConstants.frontRightWheelLocation,
+            PoseEstimationConstants.backLeftWheelLocation,
+            PoseEstimationConstants.backRightWheelLocation
         );
 
         // Initialize pose estimator
@@ -42,12 +43,12 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
             Rotation2d.fromDegrees(-gyro.getYaw().getValue().in(Degrees)),
             getModulePositions(),
             new Pose2d(),
-            VecBuilder.fill(0.1, 0.05, 0.02), 
-            VecBuilder.fill(0.7, 0.7, 9999999) 
+            VecBuilder.fill(PoseEstimationConstants.odometryXSD, PoseEstimationConstants.odometryYSD, PoseEstimationConstants.odometryRotSD), 
+            VecBuilder.fill(PoseEstimationConstants.visionXSD, PoseEstimationConstants.visionYSD, PoseEstimationConstants.visionRotSD) 
         );
 
         visionNotifier = new Notifier(this::updateVisionPose);
-        visionNotifier.startPeriodic(0.1); //10 hz instead of 40
+        visionNotifier.startPeriodic(PoseEstimationConstants.visionUpdatePeriod); //10 hz instead of 40
     }
 
     @Override
@@ -64,7 +65,7 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
         LimelightHelpers.PoseEstimate visionData = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
 
         if (visionData.tagCount > 0 && Math.abs(-gyro.getAngularVelocityZWorld().getValue().in(DegreesPerSecond)) <= 360) {
-            poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(0.7, 0.7, 9999999));
+            VecBuilder.fill(PoseEstimationConstants.visionXSD, PoseEstimationConstants.visionYSD, PoseEstimationConstants.visionRotSD);
             poseEstimator.addVisionMeasurement(visionData.pose, visionData.timestampSeconds);
         }
     }
@@ -81,4 +82,12 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
     public Pose2d getEstimatedPose() {
         return poseEstimator.getEstimatedPosition();
     }
+
+    public void resetPose(Pose2d newPose) {
+        poseEstimator.resetPosition(
+            Rotation2d.fromDegrees(-gyro.getYaw().getValue().in(Degrees)),
+            getModulePositions(),
+            newPose
+        );
+    }    
 }

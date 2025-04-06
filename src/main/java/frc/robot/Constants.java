@@ -127,6 +127,33 @@ public class Constants {
     public static final double TOLERANCE = 0.01;
   }
 
+  public final class AlignConstants {
+    // PID gains for aligning to a Pose2d
+    public static final double xP = 1.0;
+    public static final double xI = 0.0;
+    public static final double xD = 0.0;
+  
+    public static final double yP = 1.0;
+    public static final double yI = 0.0;
+    public static final double yD = 0.0;
+  
+    public static final double thetaP = 1.0;
+    public static final double thetaI = 0.0;
+    public static final double thetaD = 0.0;
+  
+    public static final double xTolerance = 0.05;//m
+    public static final double yTolerance = 0.05; 
+    public static final double rotationTolerance = 2.0; //Degrees
+  
+    // Motion constraints
+    public static final double maxVelocityMetersPerSecond = 3.0;
+    public static final double maxAccelerationMetersPerSecondSquared = 2.0;
+    public static final double maxXSpeed = 1.0;      
+    public static final double maxYSpeed = 1.0;      
+    public static final double maxRotSpeed = 90.0;   
+
+  }
+
   public static class ElevatorConstants {
     /** All values are placeholders for now */
     public static final double kP = 0.6; // 0.03

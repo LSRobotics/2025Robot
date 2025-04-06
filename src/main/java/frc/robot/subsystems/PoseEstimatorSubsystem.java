@@ -8,6 +8,7 @@ import static edu.wpi.first.units.Units.DegreesPerSecond;
 import com.ctre.phoenix6.hardware.Pigeon2;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.wpilibj.Notifier;
+import edu.wpi.first.math.kinematics.Kinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import frc.robot.Constants.PoseEstimationConstants;
 import frc.robot.generated.TunerConstants;
@@ -26,11 +27,13 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
     private final Notifier visionNotifier;
     private double lastVisionUpdate = 0;
 
+    SwerveDriveKinematics kinematics;
+
     public PoseEstimatorSubsystem(CommandSwerveDrivetrain swerve) {
         this.m_Swerve = swerve;
         this.gyro = new Pigeon2(PoseEstimationConstants.pigeonID);
 
-        SwerveDriveKinematics kinematics = new SwerveDriveKinematics(
+         kinematics = new SwerveDriveKinematics(
             PoseEstimationConstants.frontLeftWheelLocation,
             PoseEstimationConstants.frontRightWheelLocation,
             PoseEstimationConstants.backLeftWheelLocation,
@@ -90,4 +93,8 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
             newPose
         );
     }    
+
+    public SwerveDriveKinematics getKinematics(){
+        return kinematics;
+    }
 }

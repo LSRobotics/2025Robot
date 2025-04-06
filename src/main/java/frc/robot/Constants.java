@@ -128,7 +128,6 @@ public class Constants {
   }
 
   public final class AlignConstants {
-    // PID gains for aligning to a Pose2d
     public static final double xP = 1.0;
     public static final double xI = 0.0;
     public static final double xD = 0.0;
@@ -145,7 +144,6 @@ public class Constants {
     public static final double yTolerance = 0.05; 
     public static final double rotationTolerance = 2.0; //Degrees
   
-    // Motion constraints
     public static final double maxVelocityMetersPerSecond = 3.0;
     public static final double maxAccelerationMetersPerSecondSquared = 2.0;
     public static final double maxXSpeed = 1.0;      

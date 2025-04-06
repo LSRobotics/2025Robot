@@ -40,7 +40,6 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
             PoseEstimationConstants.backRightWheelLocation
         );
 
-        // Initialize pose estimator
         poseEstimator = new SwerveDrivePoseEstimator(
             kinematics,
             Rotation2d.fromDegrees(-gyro.getYaw().getValue().in(Degrees)),
@@ -56,7 +55,6 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        // Update odometry every cycle
         poseEstimator.update(Rotation2d.fromDegrees(-gyro.getYaw().getValue().in(Degrees)), getModulePositions());
     }
 

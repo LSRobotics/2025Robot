@@ -31,12 +31,10 @@ public class AlignToPoseCommand extends Command {
     this.mPoseEstimator = poseEstimator;
     this.targetPose = targetPose;
 
-    // Initialize PID controllers
     xController = new PIDController(AlignConstants.xP, AlignConstants.xI, AlignConstants.xD);
     yController = new PIDController(AlignConstants.yP, AlignConstants.yI, AlignConstants.yD);
     rotController = new PIDController(AlignConstants.thetaP, AlignConstants.thetaI, AlignConstants.thetaD);
 
-    // Enable continuous input for rotation (-180 to 180 degrees)
     rotController.enableContinuousInput(-180.0, 180.0);
 
     addRequirements(swerve, poseEstimator);
@@ -44,7 +42,6 @@ public class AlignToPoseCommand extends Command {
 
   @Override
   public void initialize() {
-    // Set target pose components
     xController.setSetpoint(targetPose.getX());
     xController.setTolerance(AlignConstants.xTolerance);
 
@@ -59,22 +56,18 @@ public class AlignToPoseCommand extends Command {
   public void execute() {
     Pose2d currentPose = mPoseEstimator.getEstimatedPose();
 
-    // Calculate errors
     double xSpeed = xController.calculate(currentPose.getX());
     double ySpeed = yController.calculate(currentPose.getY());
     double rotSpeed = rotController.calculate(currentPose.getRotation().getDegrees());
 
-    // Clamp speeds to avoid overshooting or instability
     xSpeed = MathUtil.clamp(xSpeed, -AlignConstants.maxXSpeed, AlignConstants.maxXSpeed);
     ySpeed = MathUtil.clamp(ySpeed, -AlignConstants.maxYSpeed, AlignConstants.maxYSpeed);
     rotSpeed = MathUtil.clamp(rotSpeed, -AlignConstants.maxRotSpeed, AlignConstants.maxRotSpeed);
 
-    // Optional: debug output
     SmartDashboard.putNumber("Align/Current X", currentPose.getX());
     SmartDashboard.putNumber("Align/Current Y", currentPose.getY());
     SmartDashboard.putNumber("Align/Current Rotation", currentPose.getRotation().getDegrees());
 
-    // Drive field-centric based on controller output
     mSwerve.setControl(alignRequest
         .withVelocityX(xSpeed)
         .withVelocityY(ySpeed)

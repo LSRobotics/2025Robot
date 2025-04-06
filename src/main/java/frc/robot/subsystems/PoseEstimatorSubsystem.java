@@ -40,6 +40,8 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
             PoseEstimationConstants.backRightWheelLocation
         );
 
+        //Kinematics, heading, module states, initial pose, odometry std dev, vision std dev
+
         poseEstimator = new SwerveDrivePoseEstimator(
             kinematics,
             Rotation2d.fromDegrees(-gyro.getYaw().getValue().in(Degrees)),
@@ -50,17 +52,17 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
         );
 
         visionNotifier = new Notifier(this::updateVisionPose);
-        visionNotifier.startPeriodic(PoseEstimationConstants.visionUpdatePeriod); //10 hz instead of 40
+        visionNotifier.startPeriodic(PoseEstimationConstants.visionUpdatePeriod); //10 hz instead of 40 to avoid loop overruns
     }
 
     @Override
-    public void periodic() {
+    public void periodic() { //Update with odometry data
         poseEstimator.update(Rotation2d.fromDegrees(-gyro.getYaw().getValue().in(Degrees)), getModulePositions());
     }
 
     private void updateVisionPose() {
         double currentTime = Timer.getFPGATimestamp();
-        if (currentTime - lastVisionUpdate < 0.1) return; 
+        if (currentTime - lastVisionUpdate < 0.1) return; //Avoid updating twice 
 
         lastVisionUpdate = currentTime;
         LimelightHelpers.PoseEstimate visionData = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");

@@ -16,7 +16,7 @@ public class playMusicCommand extends Command {
 
   private final Orchestra m_Orchestra;
   private SendableChooser<String> songChooser;
-  private String[] songPaths = {"music/AlmaMater.chrp", "music/piratesOfCaribbean.chrp","music/Africa.chrp"};
+  private String[] songPaths = {"music/AlmaMater.chrp", "music/piratesOfCaribbean.chrp","music/Africa.chrp", "music/TwoBirds.chrp"};
   
   public playMusicCommand() {
     m_Orchestra = new Orchestra();
@@ -33,6 +33,8 @@ public class playMusicCommand extends Command {
     songChooser.addOption("Alma Mater (2 Parts)", songPaths[0]);
     songChooser.addOption("Pirates of the Caribbean (6 parts)", songPaths[1]);
     songChooser.addOption("Africa (4 Parts)", songPaths[2]);
+    songChooser.addOption("Two Birds (4 Parts)", songPaths[3]);
+
 
     songChooser.setDefaultOption("Alma Mater (2 Parts)", songPaths[0]);
     

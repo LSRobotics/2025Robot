@@ -7,6 +7,7 @@ package frc.robot;
 import static edu.wpi.first.units.Units.*;
 
 import java.util.function.DoubleSupplier;
+import java.util.function.Supplier;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
@@ -14,6 +15,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
+import edu.wpi.first.wpilibj2.command.SelectCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants.SwerveSpeedConsts;
@@ -35,6 +38,8 @@ import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.LEDSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
+import frc.robot.utils.ControllerMode;
+import frc.robot.utils.ModeManager;
 
 import com.ctre.phoenix6.SignalLogger;
 
@@ -50,6 +55,7 @@ import frc.robot.commands.ClawToPositionCommand;
 import frc.robot.commands.CoralIntakeCommand;
 import frc.robot.commands.ElevatorToPositionCommand;
 import java.util.function.BooleanSupplier;
+import java.util.Map;
 import frc.robot.subsystems.ClawSubsystem;
 import com.playingwithfusion.TimeOfFlight;
 import com.playingwithfusion.TimeOfFlight.RangingMode;
@@ -73,7 +79,6 @@ public class RobotContainer {
   private final ElevatorSubsystem m_elevator = new ElevatorSubsystem();
 
 
-
   private final CommandSwerveDrivetrain m_drivetrain = TunerConstants.createDrivetrain();
   private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
   private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
@@ -85,8 +90,8 @@ public class RobotContainer {
   private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
   private final SwerveRequest.RobotCentric forwardStraight = new SwerveRequest.RobotCentric()
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
-
-
+  private final Supplier<ControllerMode> currentMode = () -> ModeManager.getMode();
+          
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandXboxController m_driverController =
       new CommandXboxController(OperatorConstants.kDriverControllerPort);
@@ -121,6 +126,7 @@ public class RobotContainer {
           PortForwarder.add(port, "limelight.local", port);
       }
 
+      //#region Named Commands for Auton
       //NamedCommands.registerCommand("Align", 
       //  new AlignCommand(m_drivetrain, m_Vision, true).withTimeout(2));
 
@@ -197,13 +203,13 @@ public class RobotContainer {
 
       NamedCommands.registerCommand("Align", new AutonAdjustCommand(m_Vision, m_drivetrain, true));
       NamedCommands.registerCommand("Algae Align", new AutonAlgaeAlignCommand(m_Vision, m_drivetrain));
-
+      //#endregion
 
        m_rangeSensor.setRangingMode(RangingMode.Short, 24);
        autoChooser = AutoBuilder.buildAutoChooser("Tests");
        SmartDashboard.putData("Auto Mode", autoChooser);
  
-       configureBindings();
+       configureBindingsMode();
    }
    public Command getAutonomousCommand() {
      // An example command will be run in autonomous
@@ -420,6 +426,26 @@ public class RobotContainer {
       
   }
 
+  private void configureBindingsMode(){
+    m_driverController.rightBumper().onTrue(new InstantCommand(() -> ModeManager.cycleNext()));
+    m_driverController.leftBumper().onTrue(new InstantCommand(() -> ModeManager.cyclePrev()));
+
+    m_drivetrain.registerTelemetry(new Telemetry(MaxSpeed)::telemeterize); // experiment with this telemetry TODO
+    m_drivetrain.setDefaultCommand(
+        // Drivetrain will execute this command periodically
+        m_drivetrain.applyRequest(() ->
+            drive.withVelocityX(-m_driverController.getLeftY() * swerveSpeed.getAsDouble()) // Drive forward with negative Y (forward)
+                 .withVelocityY(-m_driverController.getLeftX() *  swerveSpeed.getAsDouble()) // Drive left with negative X (left)
+                 .withRotationalRate(-m_driverController.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
+        ));
+    
+    m_driverController.a().onTrue(new SelectCommand<>(Map.of(
+      ControllerMode.DRIVING, new PrintCommand("Driving Mode"),
+      ControllerMode.SCORING, new PrintCommand("Scoring Mode")
+    ),
+    currentMode
+    ));
+  }
   public boolean coralPresent() {
     BooleanSupplier coralPresent = () -> (m_rangeSensor.getRange() > 1) && (m_rangeSensor.getRange() < 170);
     SmartDashboard.putNumber("Dist", m_rangeSensor.getRange());

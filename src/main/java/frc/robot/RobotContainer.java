@@ -26,7 +26,6 @@ import frc.robot.Constants.ClawConstants;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.AlgaeIntakeCommand;
-import frc.robot.commands.AlignCommand;
 import frc.robot.commands.AutonAdjustCommand;
 import frc.robot.commands.AutonAlgaeAlignCommand;
 import frc.robot.commands.MannualElevatorCommand;
@@ -42,17 +41,12 @@ import frc.robot.utils.ControllerMode;
 import frc.robot.utils.ModeManager;
 import frc.robot.utils.SendableSupplier;
 
-import com.ctre.phoenix6.SignalLogger;
-
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.Constants.ShooterConstants;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
-import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.net.PortForwarder;
-import edu.wpi.first.util.sendable.Sendable;
 import frc.robot.commands.ClawToPositionCommand;
 import frc.robot.commands.CoralIntakeCommand;
 import frc.robot.commands.ElevatorToPositionCommand;
@@ -64,8 +58,6 @@ import com.playingwithfusion.TimeOfFlight.RangingMode;
 
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a

@@ -6,7 +6,6 @@ package frc.robot.commands;
 
 import frc.robot.Constants.VisionConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
-import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
@@ -14,7 +13,6 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import com.ctre.phoenix6.swerve.SwerveRequest;
 
 /** An example command that uses an example subsystem. */
 public class AutonAdjustCommand extends Command {
@@ -44,6 +42,7 @@ public class AutonAdjustCommand extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    SmartDashboard.putBoolean("Align Right", isRight);
   }
 
   // Called every time the scheduler runs while the command is scheduled.

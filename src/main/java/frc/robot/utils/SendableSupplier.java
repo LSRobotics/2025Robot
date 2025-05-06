@@ -1,6 +1,5 @@
 package frc.robot.utils;
 import java.util.function.Supplier;
-import java.util.jar.Attributes.Name;
 
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;

@@ -7,6 +7,10 @@ public class ModeManager {
         return currentMode;
     }
 
+    public static String getModeColor() {
+        return ControllerMode.ModeToColor.get(currentMode);
+    }
+
     public static void setMode(ControllerMode newMode) {
         currentMode = newMode;
     }
@@ -15,6 +19,7 @@ public class ModeManager {
         ControllerMode[] modes = ControllerMode.values();
         int nextIndex = (currentMode.ordinal() + 1) % modes.length;
         currentMode = modes[nextIndex];
+        //System.out.println(nextIndex);
     }
 
     public static void cyclePrev() {

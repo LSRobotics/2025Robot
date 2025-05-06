@@ -84,8 +84,10 @@ public class RobotContainer {
   private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
   private final SwerveRequest.RobotCentric forwardStraight = new SwerveRequest.RobotCentric()
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
+  
   private final Supplier<ControllerMode> currentMode = () -> ModeManager.getMode();
-          
+  private final Supplier<String> currentModeColor = () -> ModeManager.getModeColor();
+
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandXboxController m_driverController =
       new CommandXboxController(OperatorConstants.kDriverControllerPort);
@@ -199,12 +201,14 @@ public class RobotContainer {
       NamedCommands.registerCommand("Algae Align", new AutonAlgaeAlignCommand(m_Vision, m_drivetrain));
       //#endregion
 
-      SmartDashboard.putData("Controller Mode", new SendableSupplier<>("Current mode", currentMode));
+      SmartDashboard.putData("Controller Mode", new SendableSupplier<ControllerMode>("Current mode", currentMode));
+      SmartDashboard.putData("Controller Mode Color", new SendableSupplier<String>("Color", currentModeColor));
 
        m_rangeSensor.setRangingMode(RangingMode.Short, 24);
        autoChooser = AutoBuilder.buildAutoChooser("Tests");
        SmartDashboard.putData("Auto Mode", autoChooser);
  
+       //configureBindings();
        configureBindingsMode();
    }
    public Command getAutonomousCommand() {
@@ -232,6 +236,7 @@ public class RobotContainer {
 
     //m_driverController.x().whileTrue(new AlignCommand(m_drivetrain, m_Vision,true));
 
+    //#region D-Pad Controls
     m_driverController.pov(0).whileTrue(m_drivetrain.applyRequest(() ->
         forwardStraight.withVelocityX(SwerveSpeedConsts.slowSpeed).withVelocityY(0))
     );
@@ -266,6 +271,8 @@ public class RobotContainer {
         forwardStraight.withVelocityX(diagonalSpeed).withVelocityY(diagonalSpeed))
     );
 
+    //#endregion
+    
     // Run SysId routines when holding back/start and X/Y.
     // Note that each routine should be run exactly once in a single log.
     // m_driverController.start().onTrue(Commands.runOnce(SignalLogger::start));
@@ -298,6 +305,7 @@ public class RobotContainer {
     Trigger MannualElevatorUp = new Trigger(() -> leftY.getAsDouble() < -0.8);
     Trigger MannualElevatorDown = new Trigger(() -> leftY.getAsDouble() > 0.8);
 
+    //#region Elevator Commands
     // CLAW AND ELEVATOR POSITION CONTROLS
     m_operatorController.a().onTrue(new ConditionalCommand(new ClawToPositionCommand(m_claw, ClawConstants.L1ClawPosition), 
       new ClawToPositionCommand(m_claw, ClawConstants.intermediateClawPos).andThen(Commands.parallel(
@@ -365,7 +373,8 @@ public class RobotContainer {
       new WaitUntilCommand(() -> (Math.abs(m_elevator.getPosition()-ElevatorConstants.bargeHeight) < ElevatorConstants.elevatorPrecision)).andThen(
       new ClawToPositionCommand(m_claw, ClawConstants.bargeClawPos))
       )), elevatorAtBarge));
-  
+    
+      //#endregion
     
 
 
@@ -437,10 +446,12 @@ public class RobotContainer {
     
     m_driverController.a().onTrue(new SelectCommand<>(Map.of(
       ControllerMode.DRIVING, new PrintCommand("Driving Mode"),
-      ControllerMode.SCORING, new PrintCommand("Scoring Mode")
+      ControllerMode.SCORING, new PrintCommand("Scoring Mode"),
+      ControllerMode.OTHER, new PrintCommand("Other Mode")
     ),
     currentMode
     ));
+
   }
   public boolean coralPresent() {
     BooleanSupplier coralPresent = () -> (m_rangeSensor.getRange() > 1) && (m_rangeSensor.getRange() < 170);

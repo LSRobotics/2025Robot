@@ -40,6 +40,7 @@ import frc.robot.subsystems.LEDSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
 import frc.robot.utils.ControllerMode;
 import frc.robot.utils.ModeManager;
+import frc.robot.utils.SendableSupplier;
 
 import com.ctre.phoenix6.SignalLogger;
 
@@ -51,6 +52,7 @@ import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.net.PortForwarder;
+import edu.wpi.first.util.sendable.Sendable;
 import frc.robot.commands.ClawToPositionCommand;
 import frc.robot.commands.CoralIntakeCommand;
 import frc.robot.commands.ElevatorToPositionCommand;
@@ -204,6 +206,8 @@ public class RobotContainer {
       NamedCommands.registerCommand("Align", new AutonAdjustCommand(m_Vision, m_drivetrain, true));
       NamedCommands.registerCommand("Algae Align", new AutonAlgaeAlignCommand(m_Vision, m_drivetrain));
       //#endregion
+
+      SmartDashboard.putData("Controller Mode", new SendableSupplier<>("Current mode", currentMode));
 
        m_rangeSensor.setRangingMode(RangingMode.Short, 24);
        autoChooser = AutoBuilder.buildAutoChooser("Tests");

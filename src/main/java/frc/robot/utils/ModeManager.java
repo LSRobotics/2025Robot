@@ -1,7 +1,7 @@
 package frc.robot.utils;
 
 public class ModeManager {
-    private static ControllerMode currentMode = ControllerMode.SCORING_1;
+    private static ControllerMode currentMode = ControllerMode.DRIVER;
 
     public static ControllerMode getMode() {
         return currentMode;

@@ -22,8 +22,8 @@ public class Bindings {
 
     public Bindings(ClawSubsystem m_Claw, CommandSwerveDrivetrain m_Swerve, ElevatorSubsystem m_Elevator, LEDSubsystem m_LEDs, ShooterSubsystem m_Shooter, VisionSubsystem m_Vision) {
         xButtonCommands = Map.ofEntries(
-            Map.entry(ControllerMode.SCORING_1, new CoralShootCommand(m_Shooter, ShooterConstants.slowShooterSpeed)),
-            Map.entry(ControllerMode.DRIVING_2, new InstantCommand(() -> m_Elevator.fastModeBool=!m_Elevator.fastModeBool))
+            Map.entry(ControllerMode.DRIVER, new CoralShootCommand(m_Shooter, ShooterConstants.slowShooterSpeed)),
+            Map.entry(ControllerMode.OPERATOR, new InstantCommand(() -> m_Elevator.fastModeBool=!m_Elevator.fastModeBool))
         );
     }
 }

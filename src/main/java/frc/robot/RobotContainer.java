@@ -445,12 +445,13 @@ public class RobotContainer {
         ));
     
     m_driverController.a().onTrue(new SelectCommand<>(Map.of(
-      ControllerMode.DRIVING_2, new PrintCommand("Driving Mode"),
-      ControllerMode.SCORING_1, new PrintCommand("Scoring Mode"),
-      ControllerMode.OTHER_3, new PrintCommand("Other Mode")
+      ControllerMode.DRIVER, new PrintCommand("Driving Mode"),
+      ControllerMode.OPERATOR, new PrintCommand("Scoring Mode"),
+      ControllerMode.OTHER, new PrintCommand("Other Mode")
     ),
     currentMode
     ));
+    
 
   }
   public boolean coralPresent() {

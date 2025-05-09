@@ -7,6 +7,11 @@ import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DriverStation;
 import java.util.function.Function;
+//Example use: SmartDashboard.putData("Controller Mode", new SendableSupplier<ControllerMode>("Current mode", currentMode));
+//Example 2: new SendableSupplier<ControllerMode>("Current mode", currentMode, ControllerMode.class);
+//Example 3: new SendableSupplier<ControllerMode>("Current mode", currentMode, ControllerMode.class, (x) -> x.toString());
+
+//TODO: find a way to get more type errs to compile time instead of runtime
 public class SendableSupplier<T> implements Supplier<T>, Sendable { //TODO; add Consumer<T> for setting sendable
     private final Supplier<T> supplier;
     private final String name;
@@ -43,7 +48,7 @@ public class SendableSupplier<T> implements Supplier<T>, Sendable { //TODO; add 
         if (temp == null) {
             DriverStation.reportWarning("Sendablesupplier: Supplierr with name '"+name+"' returned 'null'",false);
         }
-        else if (this.expectedType != null && !expectedType.isInstance(temp)){
+        else if (this.expectedType != null && !expectedType.isInstance(temp)){ //TODO: avoid reflection 
             DriverStation.reportWarning("SendableSupplier: Supplier wiht name '"+name+"' returned a object of type "+temp.getClass().getName()+" instaed of "+expectedType.getClass().getName()+ (typeInferred?". Type was inferred":""), false);
         }
         else if (!typeSet && temp != null){
@@ -85,7 +90,7 @@ public class SendableSupplier<T> implements Supplier<T>, Sendable { //TODO; add 
                     return fallbackFormatter.apply(sample);
                 } catch (Exception e) {
                     DriverStation.reportWarning("fallback formatter failed fro '" + name + "': " + e.getMessage(), false);
-                    return "ERROR";
+                    return "Fallback err";
                 }
             }, null);
         }

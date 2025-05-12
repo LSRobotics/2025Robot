@@ -9,7 +9,6 @@ import com.ctre.phoenix6.hardware.Pigeon2;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Notifier;
-import edu.wpi.first.math.kinematics.Kinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import frc.robot.Constants.PoseEstimationConstants;
 import frc.robot.generated.TunerConstants;
@@ -26,26 +25,33 @@ import frc.robot.subsystems.LimelightHelpers;
 import frc.robot.subsystems.LimelightHelpers.PoseEstimate;
 import frc.robot.subsystems.LimelightHelpers.RawFiducial;
 
-public class PoseEstimatorSubsystem extends SubsystemBase {
-    private final CommandSwerveDrivetrain m_Swerve;
-    private final Pigeon2 gyro;
-    private final SwerveDrivePoseEstimator poseEstimator;
+public class PoseEstimator {
+    private static CommandSwerveDrivetrain m_Swerve;
+    private static Pigeon2 gyro;
+    private static SwerveDrivePoseEstimator poseEstimator;
 
-    private final Notifier visionNotifier;
-    private double lastVisionUpdate = 0;
+    private static Notifier visionNotifier;
+    private static double lastVisionUpdate = 0;
 
-    SwerveDriveKinematics kinematics;
+    private static SwerveDriveKinematics kinematics;
+    private static boolean isInitialized = false;
 
-    public PoseEstimatorSubsystem(CommandSwerveDrivetrain swerve) {
-        this.m_Swerve = swerve;
-        this.gyro = new Pigeon2(PoseEstimationConstants.pigeonID);
+    // Private constructor to prevent instantiation
+    private PoseEstimator() {}
+
+    public static void initialize(CommandSwerveDrivetrain swerve) {
+        if (isInitialized) {
+            return; // Prevent multiple initializations
+        }
+        
+        m_Swerve = swerve;
+        gyro = new Pigeon2(PoseEstimationConstants.pigeonID);
 
         kinematics = new SwerveDriveKinematics(
                 PoseEstimationConstants.frontLeftWheelLocation,
                 PoseEstimationConstants.frontRightWheelLocation,
                 PoseEstimationConstants.backLeftWheelLocation,
                 PoseEstimationConstants.backRightWheelLocation);
-
 
         poseEstimator = new SwerveDrivePoseEstimator(
                 kinematics,
@@ -57,23 +63,25 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
                 VecBuilder.fill(PoseEstimationConstants.visionXSD, PoseEstimationConstants.visionYSD,
                         PoseEstimationConstants.visionRotSD));
 
-        visionNotifier = new Notifier(this::updateVisionPose);
+        visionNotifier = new Notifier(PoseEstimator::updateVisionPose);
         visionNotifier.startPeriodic(PoseEstimationConstants.visionUpdatePeriod); // 10 hz instead of 40 to avoid loop overruns
+        
+        isInitialized = true;
     }
 
-    @Override
-    public void periodic() { // Update with odometry data
+    public static void periodic() { // Update with odometry data
+        ensureInitialized();
         poseEstimator.update(Rotation2d.fromDegrees(-gyro.getYaw().getValue().in(Degrees)), getModulePositions());
     }
 
-    private double getEntry(double[] data, int position) {
+    private static double getEntry(double[] data, int position) {
         if (data.length < position + 1) {
             return 0;
-          }
-          return data[position];
+        }
+        return data[position];
     }
 
-    private PoseEstimate getVisionEstimate(String limelightName, String entryName, boolean isMegaTag2) {
+    private static PoseEstimate getVisionEstimate(String limelightName, String entryName, boolean isMegaTag2) {
         DoubleArrayEntry poseEntry = LimelightHelpers.getLimelightDoubleArrayEntry(limelightName, entryName);
 
         TimestampedDoubleArray tsValue = poseEntry.getAtomic();
@@ -85,8 +93,11 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
         }
 
         Pose2d pose;
-        if (poseArray.length < 6) {pose = new Pose2d();DriverStation.reportWarning("LL pose array missing elements", false);}
-        else{
+        if (poseArray.length < 6) {
+            pose = new Pose2d();
+            DriverStation.reportWarning("LL pose array missing elements", false);
+        }
+        else {
             Translation2d tran2d = new Translation2d(poseArray[0], poseArray[1]);
             Rotation2d r2d = new Rotation2d(Units.degreesToRadians(poseArray[5]));
             pose = new Pose2d(tran2d, r2d);
@@ -106,6 +117,7 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
         int expectedTotalVals = 11 + valsPerFiducial * tagCount;
 
         if (poseArray.length != expectedTotalVals) {
+            // Handle error case silently
         } 
         else {
             for (int i = 0; i < tagCount; i++) {
@@ -125,15 +137,16 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
                 isMegaTag2);
     }
 
-    private void updateVisionPose() {
+    private static void updateVisionPose() {
+        ensureInitialized();
         double currentTime = Timer.getFPGATimestamp();
         if (currentTime - lastVisionUpdate < 0.1)
             return; // Avoid updating twice
 
         lastVisionUpdate = currentTime;
-        LimelightHelpers.PoseEstimate visionData = getVisionEstimate("limelight", "botpose_wpiblue",true);
+        LimelightHelpers.PoseEstimate visionData = getVisionEstimate("limelight", "botpose_wpiblue", true);
 
-        if (visionData.tagCount > 0
+        if (visionData != null && visionData.tagCount > 0
                 && Math.abs(-gyro.getAngularVelocityZWorld().getValue().in(DegreesPerSecond)) <= 360) {
             VecBuilder.fill(PoseEstimationConstants.visionXSD, PoseEstimationConstants.visionYSD,
                     PoseEstimationConstants.visionRotSD);
@@ -141,7 +154,8 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
         }
     }
 
-    private SwerveModulePosition[] getModulePositions() {
+    private static SwerveModulePosition[] getModulePositions() {
+        ensureInitialized();
         return new SwerveModulePosition[] {
                 m_Swerve.getModule(0).getPosition(true),
                 m_Swerve.getModule(1).getPosition(true),
@@ -150,18 +164,36 @@ public class PoseEstimatorSubsystem extends SubsystemBase {
         };
     }
 
-    public Pose2d getEstimatedPose() {
+    public static Pose2d getEstimatedPose() {
+        ensureInitialized();
         return poseEstimator.getEstimatedPosition();
     }
 
-    public void resetPose(Pose2d newPose) {
+    public static void resetPose(Pose2d newPose) {
+        ensureInitialized();
         poseEstimator.resetPosition(
                 Rotation2d.fromDegrees(-gyro.getYaw().getValue().in(Degrees)),
                 getModulePositions(),
                 newPose);
     }
 
-    public SwerveDriveKinematics getKinematics() {
+    public static SwerveDriveKinematics getKinematics() {
+        ensureInitialized();
         return kinematics;
+    }
+    
+    // Helper method to ensure the subsystem is initialized before use
+    private static void ensureInitialized() {
+        if (!isInitialized) {
+            throw new IllegalStateException("PoseEstimatorSubsystem must be initialized before use. Call initialize() first.");
+        }
+    }
+    
+    // Clean up resources when the robot is disabled/stopped
+    public static void shutdown() {
+        if (visionNotifier != null) {
+            visionNotifier.stop();
+        }
+        // Add any other cleanup needed
     }
 }

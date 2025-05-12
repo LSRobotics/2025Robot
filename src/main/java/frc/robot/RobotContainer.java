@@ -52,6 +52,7 @@ import com.playingwithfusion.TimeOfFlight.RangingMode;
 
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.subsystems.PoseEstimator;
 
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 
@@ -106,6 +107,7 @@ public class RobotContainer {
   private final TimeOfFlight m_rangeSensor = new TimeOfFlight(ClawConstants.sensorID);
 
    public RobotContainer() {
+      PoseEstimator.initialize(m_drivetrain);
       for (int port = 5800; port <= 5809; port++) {
           PortForwarder.add(port, "limelight.local", port);
       }

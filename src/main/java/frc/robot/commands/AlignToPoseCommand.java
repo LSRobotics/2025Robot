@@ -2,6 +2,7 @@ package frc.robot.commands;
 
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
+import com.pathplanner.lib.pathfinding.Pathfinding;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -10,7 +11,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 
 import frc.robot.Constants.AlignConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
-import frc.robot.subsystems.PoseEstimatorSubsystem;
+import frc.robot.subsystems.PoseEstimator;
 import edu.wpi.first.math.MathUtil;
 
 public class AlignToPoseCommand extends Command {
@@ -19,16 +20,14 @@ public class AlignToPoseCommand extends Command {
   private final PIDController rotController;
 
   private final CommandSwerveDrivetrain mSwerve;
-  private final PoseEstimatorSubsystem mPoseEstimator;
   private final Pose2d targetPose;
 
   private static final SwerveRequest.FieldCentric alignRequest = new SwerveRequest.FieldCentric()
       .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
   private static final SwerveRequest.Idle idleRequest = new SwerveRequest.Idle();
 
-  public AlignToPoseCommand(CommandSwerveDrivetrain swerve, PoseEstimatorSubsystem poseEstimator, Pose2d targetPose) {
+  public AlignToPoseCommand(CommandSwerveDrivetrain swerve, Pose2d targetPose) {
     this.mSwerve = swerve;
-    this.mPoseEstimator = poseEstimator;
     this.targetPose = targetPose;
 
     xController = new PIDController(AlignConstants.xP, AlignConstants.xI, AlignConstants.xD);
@@ -37,7 +36,7 @@ public class AlignToPoseCommand extends Command {
 
     rotController.enableContinuousInput(-180.0, 180.0);
 
-    addRequirements(swerve, poseEstimator);
+    addRequirements(swerve);
   }
 
   @Override
@@ -54,7 +53,7 @@ public class AlignToPoseCommand extends Command {
 
   @Override
   public void execute() {
-    Pose2d currentPose = mPoseEstimator.getEstimatedPose();
+    Pose2d currentPose = PoseEstimator.getEstimatedPose();
 
     double xSpeed = xController.calculate(currentPose.getX());
     double ySpeed = yController.calculate(currentPose.getY());

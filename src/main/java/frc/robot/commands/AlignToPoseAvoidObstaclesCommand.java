@@ -6,7 +6,7 @@ package frc.robot.commands;
 
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.ExampleSubsystem;
-import frc.robot.subsystems.PoseEstimatorSubsystem;
+import frc.robot.subsystems.PoseEstimator;
 
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Radians;
@@ -24,15 +24,12 @@ import edu.wpi.first.units.Units;
 public class AlignToPoseAvoidObstaclesCommand extends Command {
     @SuppressWarnings({ "PMD.UnusedPrivateField", "PMD.SingularField" })
     private final CommandSwerveDrivetrain m_Swerve;
-    private final PoseEstimatorSubsystem m_PoseEstimator;
     private final Pose2d targetPose;
     private final Command path;
 
 
-    public AlignToPoseAvoidObstaclesCommand(CommandSwerveDrivetrain swerve, PoseEstimatorSubsystem poseEstimator,
-            Pose2d targetPose) {
+    public AlignToPoseAvoidObstaclesCommand(CommandSwerveDrivetrain swerve, Pose2d targetPose) {
         m_Swerve = swerve;
-        m_PoseEstimator = poseEstimator;
         this.targetPose = targetPose;
 
         PathConstraints constraints = new PathConstraints(
@@ -44,7 +41,7 @@ public class AlignToPoseAvoidObstaclesCommand extends Command {
                 constraints,
                 0.0);
 
-        addRequirements(swerve, poseEstimator);
+        addRequirements(swerve);
     }
 
     // Called when the command is initially scheduled.

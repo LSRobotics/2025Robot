@@ -9,7 +9,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
-import frc.robot.subsystems.PoseEstimatorSubsystem;
+import frc.robot.subsystems.PoseEstimator;
 import java.util.Timer;
 
 import com.pathplanner.lib.commands.PathPlannerAuto;
@@ -40,6 +40,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
+    PoseEstimator.periodic();
     CommandScheduler.getInstance().run();
   }
 

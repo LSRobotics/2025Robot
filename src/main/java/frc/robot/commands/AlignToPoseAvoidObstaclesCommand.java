@@ -15,6 +15,8 @@ import static edu.wpi.first.units.Units.Rotation;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.path.PathConstraints;
+import com.pathplanner.lib.pathfinding.LocalADStar;
+import com.pathplanner.lib.pathfinding.Pathfinding;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -29,6 +31,7 @@ public class AlignToPoseAvoidObstaclesCommand extends Command {
 
 
     public AlignToPoseAvoidObstaclesCommand(CommandSwerveDrivetrain swerve, Pose2d targetPose) {
+        Pathfinding.setPathfinder(new LocalADStar());
         m_Swerve = swerve;
         this.targetPose = targetPose;
 

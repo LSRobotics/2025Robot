@@ -151,6 +151,7 @@ public class PoseEstimator {
             VecBuilder.fill(PoseEstimationConstants.visionXSD, PoseEstimationConstants.visionYSD,
                     PoseEstimationConstants.visionRotSD);
             poseEstimator.addVisionMeasurement(visionData.pose, visionData.timestampSeconds);
+            m_Swerve.addVisionMeasurement(visionData.pose, currentTime);
         }
     }
 

@@ -7,9 +7,6 @@ import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DriverStation;
 import java.util.function.Function;
-//Example use: SmartDashboard.putData("Controller Mode", new SendableSupplier<ControllerMode>("Current mode", currentMode));
-//Example 2: new SendableSupplier<ControllerMode>("Current mode", currentMode, ControllerMode.class);
-//Example 3: new SendableSupplier<ControllerMode>("Current mode", currentMode, ControllerMode.class, (x) -> x.toString());
 
 //TODO: find a way to get more type errs to compile time instead of runtime
 public class SendableSupplier<T> implements Supplier<T>, Sendable { //TODO; add Consumer<T> for setting sendable

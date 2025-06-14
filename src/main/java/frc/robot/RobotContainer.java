@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SelectCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -432,27 +433,108 @@ public class RobotContainer {
   }
 
   private void configureBindingsMode(){
-    m_driverController.rightBumper().onTrue(new InstantCommand(() -> ModeManager.cycleNext()));
-    m_driverController.leftBumper().onTrue(new InstantCommand(() -> ModeManager.cyclePrev()));
+    //m_driverController.rightBumper().onTrue(new InstantCommand(() -> ModeManager.cycleNext()));
+    m_driverController.leftTrigger().onTrue(new InstantCommand(() -> ModeManager.cycleNext()));
 
     m_drivetrain.registerTelemetry(new Telemetry(MaxSpeed)::telemeterize); // experiment with this telemetry TODO
-    m_drivetrain.setDefaultCommand(
-        // Drivetrain will execute this command periodically
-        m_drivetrain.applyRequest(() ->
-            drive.withVelocityX(-m_driverController.getLeftY() * swerveSpeed.getAsDouble()) // Drive forward with negative Y (forward)
-                 .withVelocityY(-m_driverController.getLeftX() *  swerveSpeed.getAsDouble()) // Drive left with negative X (left)
-                 .withRotationalRate(-m_driverController.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
-        ));
+
     
     m_driverController.a().onTrue(new SelectCommand<>(Map.of(
-      ControllerMode.DRIVER, new PrintCommand("Driving Mode"),
-      ControllerMode.OPERATOR, new PrintCommand("Scoring Mode"),
-      ControllerMode.OTHER, new PrintCommand("Other Mode")
+      ControllerMode.NoGamePieceState,        new ClawToPositionCommand(m_claw, ClawConstants.intermediateClawPos).andThen(Commands.parallel(
+        new ElevatorToPositionCommand(m_elevator,ElevatorConstants.L1Height), 
+        new WaitUntilCommand(() -> (Math.abs(m_elevator.getPosition()-ElevatorConstants.L1Height) < ElevatorConstants.elevatorPrecision)).andThen(
+        new ClawToPositionCommand(m_claw, ClawConstants.L1ClawPosition)))),
+
+      ControllerMode.CORALState, new ClawToPositionCommand(m_claw, ClawConstants.intermediateClawPos).andThen(Commands.parallel(
+        new ElevatorToPositionCommand(m_elevator,ElevatorConstants.L1Height), 
+        new WaitUntilCommand(() -> (Math.abs(m_elevator.getPosition()-ElevatorConstants.L1Height) < ElevatorConstants.elevatorPrecision)).andThen(
+        new ClawToPositionCommand(m_claw, ClawConstants.L1ClawPosition)))),
+
+    
+      ControllerMode.ALGAEState,                new ClawToPositionCommand(m_claw, ClawConstants.processorClawPos).andThen(Commands.parallel(
+        new ElevatorToPositionCommand(m_elevator,ElevatorConstants.processorHeight), 
+        new WaitUntilCommand(() -> (Math.abs(m_elevator.getPosition()-ElevatorConstants.processorHeight) < ElevatorConstants.elevatorPrecision)).andThen(
+        new ClawToPositionCommand(m_claw, ClawConstants.processorClawPos)).andThen(
+        new InstantCommand(() -> m_shooter.runShooterMotor(ShooterConstants.algaeSpeed)))))
     ),
     currentMode
     ));
-    
 
+    m_driverController.b().onTrue(new SelectCommand<>(Map.of(
+      ControllerMode.NoGamePieceState, new InstantCommand(),
+
+      ControllerMode.CORALState, new ClawToPositionCommand(m_claw, ClawConstants.L2ClawPosition).andThen(Commands.parallel(
+        new ElevatorToPositionCommand(m_elevator,ElevatorConstants.L2Height), 
+        new WaitUntilCommand(() -> (Math.abs(m_elevator.getPosition()-ElevatorConstants.L2Height) < ElevatorConstants.elevatorPrecision)).andThen(
+        new ClawToPositionCommand(m_claw, ClawConstants.L2ClawPosition)))),
+
+      ControllerMode.ALGAEState, new CoralShootCommand(m_shooter,ShooterConstants.algaeSpeed)
+
+    ), currentMode));
+
+    m_driverController.x().onTrue(new SelectCommand<>(Map.of(
+      ControllerMode.NoGamePieceState, new InstantCommand(),
+
+      ControllerMode.CORALState, new ClawToPositionCommand(m_claw, ClawConstants.L3ClawPosition).andThen(Commands.parallel(
+        new ElevatorToPositionCommand(m_elevator,ElevatorConstants.L3Height), 
+        new WaitUntilCommand(() -> (Math.abs(m_elevator.getPosition()-ElevatorConstants.L3Height) < ElevatorConstants.elevatorPrecision)).andThen(
+        new ClawToPositionCommand(m_claw, ClawConstants.L3ClawPosition)))),
+
+      ControllerMode.ALGAEState, new ClawToPositionCommand(m_claw, ClawConstants.intermediateClawPos).andThen(Commands.parallel(
+        new ElevatorToPositionCommand(m_elevator,ElevatorConstants.A1Height), 
+        new WaitUntilCommand(() -> (Math.abs(m_elevator.getPosition()-ElevatorConstants.A1Height) < ElevatorConstants.elevatorPrecision)).andThen(new ClawToPositionCommand(m_claw, ClawConstants.algaeClawPos)).andThen(
+        new InstantCommand(() -> m_shooter.runShooterMotor(ShooterConstants.algaeSpeed))
+        ))
+      )
+    ), currentMode));
+
+    m_driverController.y().onTrue(new SelectCommand<>(Map.of(
+      ControllerMode.NoGamePieceState, new InstantCommand(),
+
+      ControllerMode.CORALState, new ClawToPositionCommand(m_claw, ClawConstants.L4ClawPosition).andThen(Commands.parallel(
+        new ElevatorToPositionCommand(m_elevator,ElevatorConstants.L4Height), 
+        new WaitUntilCommand(() -> (Math.abs(m_elevator.getPosition()-ElevatorConstants.L4Height) < ElevatorConstants.elevatorPrecision)).andThen(
+        new ClawToPositionCommand(m_claw, ClawConstants.L4ClawPosition)))),
+
+      ControllerMode.ALGAEState, new ClawToPositionCommand(m_claw, ClawConstants.intermediateClawPos).andThen(Commands.parallel(
+        new ElevatorToPositionCommand(m_elevator,ElevatorConstants.A2Height), 
+        new WaitUntilCommand(() -> (Math.abs(m_elevator.getPosition()-ElevatorConstants.A2Height) < ElevatorConstants.elevatorPrecision)).andThen(new ClawToPositionCommand(m_claw, ClawConstants.algaeClawPos)).andThen(
+        new InstantCommand(() -> m_shooter.runShooterMotor(ShooterConstants.algaeSpeed))
+        ))
+      )
+    ), currentMode));
+    
+    m_driverController.rightTrigger().onTrue(new SelectCommand<>(Map.of(
+      ControllerMode.NoGamePieceState, new InstantCommand(),
+
+      ControllerMode.CORALState, new CoralShootCommand(m_shooter, ShooterConstants.slowShooterSpeed),
+
+      ControllerMode.ALGAEState, new ParallelCommandGroup(
+        new CoralShootCommand(m_shooter, ShooterConstants.bargeAlgaeShooterSpeed), 
+        new ManualClawCommand(m_claw, -ClawConstants.bargeClawSpeed)).withTimeout(0.25)
+    ), currentMode));
+
+    m_driverController.leftBumper().onTrue(new SelectCommand<>(Map.of(
+      ControllerMode.NoGamePieceState, new InstantCommand(),
+
+      ControllerMode.CORALState, new CoralShootCommand(m_shooter, -ShooterConstants.slowShooterSpeed),
+
+      ControllerMode.ALGAEState, new AlgaeIntakeCommand(m_shooter)
+    ), currentMode));
+
+    m_driverController.rightBumper().onTrue(new SelectCommand<>(Map.of(
+      ControllerMode.NoGamePieceState, new InstantCommand(),
+
+      ControllerMode.CORALState, new AutonAdjustCommand(m_Vision, m_drivetrain, true),
+
+      ControllerMode.ALGAEState,         new ClawToPositionCommand(m_claw, ClawConstants.algaeClawPos).andThen(Commands.parallel(
+        new ElevatorToPositionCommand(m_elevator,ElevatorConstants.bargeHeight), 
+        new WaitUntilCommand(() -> (Math.abs(m_elevator.getPosition()-ElevatorConstants.bargeHeight) < ElevatorConstants.elevatorPrecision)).andThen(
+        new ClawToPositionCommand(m_claw, ClawConstants.bargeClawPos)).andThen(
+        ))
+      )
+    ), currentMode));
+    
   }
   public boolean coralPresent() {
     BooleanSupplier coralPresent = () -> (m_rangeSensor.getRange() > 1) && (m_rangeSensor.getRange() < 170);

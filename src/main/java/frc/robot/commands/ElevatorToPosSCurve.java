@@ -20,31 +20,6 @@ public class ElevatorToPosSCurve extends Command {
 
     private double startT;
 
-    public ElevatorToPosSCurve(ElevatorSubsystem elevator, double targetPosition) {
-        m_Elevator = elevator;
-        targetPos = targetPosition;
-
-        m_PID = new PIDController(ElevatorConstants.kP, ElevatorConstants.kI, ElevatorConstants.kD);
-        m_PID.setTolerance(ElevatorConstants.elevatorPosTolerance);
-
-        m_FF = new ElevatorFeedforward(ElevatorConstants.kS, ElevatorConstants.kG, ElevatorConstants.kV,
-                ElevatorConstants.kA);
-
-        double currentPos = m_Elevator.getPosition();
-        double currentVel = 0; // add method to subsytem latter
-
-        double maxVelocity = 3;
-        double maxAcceleration = 2;
-        double maxJerk = 1.5; 
-
-        m_Profile = new SCurveMotionProfile(
-                currentPos, currentVel,
-                targetPos, 0,
-                maxVelocity, maxAcceleration, maxJerk);
-
-        addRequirements(m_Elevator);
-    }
-
     public ElevatorToPosSCurve(ElevatorSubsystem elevator, double targetPosition, double maxVelocity,
             double maxAcceleration, double maxJerk) {
         m_Elevator = elevator;
@@ -53,8 +28,7 @@ public class ElevatorToPosSCurve extends Command {
         m_PID = new PIDController(ElevatorConstants.kP, ElevatorConstants.kI, ElevatorConstants.kD);
         m_PID.setTolerance(ElevatorConstants.elevatorPosTolerance);
 
-        m_FF = new ElevatorFeedforward(ElevatorConstants.kS, ElevatorConstants.kG, ElevatorConstants.kV,
-                ElevatorConstants.kA);
+        m_FF = new ElevatorFeedforward(ElevatorConstants.kS, ElevatorConstants.kG, ElevatorConstants.kV, ElevatorConstants.kA);
 
         double currentPos = m_Elevator.getPosition();
         double currentVel = 0; // add method to subsytem latter

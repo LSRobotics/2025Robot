@@ -1,7 +1,45 @@
 plugins {
     id "java"
     id "edu.wpi.first.GradleRIO" version "2025.3.2"
+    id "com.peterabeles.gversion" version "1.10"
 }
+
+project.compileJava.dependsOn(createVersionFile)
+gversion {
+  srcDir       = "src/main/java/"
+  classPackage = "frc.robot"
+  className    = "GitBuildConstants"
+  dateFormat   = "yyyy-MM-dd HH:mm:ss z"
+  timeZone     = "America/New_York" // Use preferred time zone
+  indent       = "  "
+}
+
+task createAdditionalBuildInfo {
+    doLast {
+        def javaVersion = System.getProperty("java.version")
+        def gradleVersion = gradle.gradleVersion
+        def osName = System.getProperty("os.name")
+        def osVersion = System.getProperty("os.version")
+        def osArch = System.getProperty("os.arch")
+        def buildType = project.hasProperty('buildType') ? project.buildType : "default"
+
+        def file = file("src/main/java/frc/robot/SystemBuildConstants.java")
+        file.text = """
+        package frc.robot;
+
+        public class SystemBuildConstants {
+            public static final String JAVA_VERSION = "${javaVersion}";
+            public static final String GRADLE_VERSION = "${gradleVersion}";
+            public static final String OS_NAME = "${osName}";
+            public static final String OS_VERSION = "${osVersion}";
+            public static final String OS_ARCH = "${osArch}";
+            public static final String BUILD_TYPE = "${buildType}";
+        }
+        """
+    }
+}
+compileJava.dependsOn(createAdditionalBuildInfo)
+
 
 java {
     sourceCompatibility = JavaVersion.VERSION_17

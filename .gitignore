@@ -185,3 +185,9 @@ compile_commands.json
 
 # Eclipse generated file for annotation processors
 .factorypath
+
+# Advantage Kit Logs
+src/main/java/frc/robot/BuildConstants.java
+src/main/java/frc/robot/SystemBuildConstants.java
+src/main/java/frc/robot/GitBuildConstants.java
+src\main\java\frc\robot\BuildConstants.java

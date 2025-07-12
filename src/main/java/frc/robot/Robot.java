@@ -40,11 +40,27 @@ public class Robot extends LoggedRobot {
    */
   public Robot() {
 
+    Logger.recordMetadata("ProjectName", GitBuildConstants.MAVEN_NAME);
+    Logger.recordMetadata("BuildDate", GitBuildConstants.BUILD_DATE);
+    Logger.recordMetadata("GitSHA", GitBuildConstants.GIT_SHA);
+    Logger.recordMetadata("GitDate", GitBuildConstants.GIT_DATE);
+    Logger.recordMetadata("GitBranch", GitBuildConstants.GIT_BRANCH);
+    Logger.recordMetadata("WPILIB Version", GitBuildConstants.VERSION);
+    Logger.recordMetadata("Is Real", ""+Robot.isReal()); 
+    Logger.recordMetadata("Dirty", ""+GitBuildConstants.DIRTY);
+
+    Logger.recordMetadata("Java Version", SystemBuildConstants.JAVA_VERSION);
+    Logger.recordMetadata("Gradle Version", SystemBuildConstants.GRADLE_VERSION);
+    Logger.recordMetadata("OS Name", SystemBuildConstants.OS_NAME);
+    Logger.recordMetadata("OS Version", SystemBuildConstants.OS_VERSION);
+    Logger.recordMetadata("OS Arch", SystemBuildConstants.OS_ARCH);
+    Logger.recordMetadata("Build Type", SystemBuildConstants.BUILD_TYPE);
+
     Logger.addDataReceiver(new WPILOGWriter()); // Log to a USB stick ("/U/logs")
     Logger.addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
     Logger.start();
 
-    OtherLoggers.start(this, new PowerDistribution(0, PowerDistribution.ModuleType.kRev));
+    OtherLoggers.start(this, new PowerDistribution(1, PowerDistribution.ModuleType.kRev));
     // Instantiate our RobotContainer. This will perform all our button bindings,
     // and put our
     // autonomous chooser on the dashboard.

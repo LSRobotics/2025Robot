@@ -37,6 +37,7 @@ import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
 import frc.robot.subsystems.claw.ClawSubsystem;
 import frc.robot.subsystems.drive.CommandSwerveDrivetrain;
+import frc.robot.subsystems.drive.CommandSwerveDrivetrainLogger;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.leds.LEDIOBlinken;
 import frc.robot.subsystems.leds.LEDSubsystem;
@@ -127,6 +128,8 @@ public class RobotContainer {
       for (int port = 5800; port <= 5809; port++) {
           PortForwarder.add(port, "limelight.local", port);
       }
+
+      CommandSwerveDrivetrainLogger.start("CommandSwerveDrivetrain", m_drivetrain, 0.025);
 
       //NamedCommands.registerCommand("Align", 
       //  new AlignCommand(m_drivetrain, m_Vision, true).withTimeout(2));

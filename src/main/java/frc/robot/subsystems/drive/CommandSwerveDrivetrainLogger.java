@@ -18,6 +18,7 @@ public class CommandSwerveDrivetrainLogger {
     private static String subsystemName;
 
     public static void start(String name, CommandSwerveDrivetrain swerveDrivetrain, double period) {
+        
         subsystemName = name;
         drivetrain = swerveDrivetrain;
         if (notifier == null) {
@@ -65,6 +66,18 @@ public class CommandSwerveDrivetrainLogger {
             Logger.recordOutput(modulePath + "Position", positions[i].distanceMeters);
             Logger.recordOutput(modulePath + "DesiredAngle", desiredStates[i].angle.getDegrees());
             Logger.recordOutput(modulePath + "DesiredSpeed", desiredStates[i].speedMetersPerSecond);
+
+            var driveMotor = drivetrain.getModule(i).getDriveMotor();
+            String driveMotorPath = modulePath + "DriveMotor/";
+            Logger.recordOutput(driveMotorPath + "Voltage", driveMotor.getMotorVoltage().getValue());
+            Logger.recordOutput(driveMotorPath + "CurrentAmps", driveMotor.getSupplyCurrent().getValue());
+            Logger.recordOutput(driveMotorPath + "TempCelsius", driveMotor.getDeviceTemp().getValue());
+
+            var steerMotor = drivetrain.getModule(i).getSteerMotor();
+            String steerMotorPath = modulePath + "SteerMotor/";
+            Logger.recordOutput(steerMotorPath + "Voltage", steerMotor.getMotorVoltage().getValue());
+            Logger.recordOutput(steerMotorPath + "CurrentAmps", steerMotor.getSupplyCurrent().getValue());
+            Logger.recordOutput(steerMotorPath + "TempCelsius", steerMotor.getDeviceTemp().getValue());
         }
 
         //Voltage and current for each motor

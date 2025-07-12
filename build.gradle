@@ -23,6 +23,18 @@ task createAdditionalBuildInfo {
         def osArch = System.getProperty("os.arch")
         def buildType = project.hasProperty('buildType') ? project.buildType : "default"
 
+        // Parse all vendordeps JSON files for name/version
+        def vendorMeta = []
+        def vendordepsDir = file("vendordeps")
+        if (vendordepsDir.exists()) {
+            vendordepsDir.eachFileMatch(~/.*\.json/) { f -> //type:ignore
+                def json = new groovy.json.JsonSlurper().parseText(f.text)
+                if (json.name && json.version) {
+                    vendorMeta << "        \"${json.name}:${json.version}\""
+                }
+            }
+        }
+
         def file = file("src/main/java/frc/robot/SystemBuildConstants.java")
         file.text = """
         package frc.robot;
@@ -34,6 +46,9 @@ task createAdditionalBuildInfo {
             public static final String OS_VERSION = "${osVersion}";
             public static final String OS_ARCH = "${osArch}";
             public static final String BUILD_TYPE = "${buildType}";
+            public static final String[] VENDORLIBS = {
+${vendorMeta.join(",\n")}
+            };
         }
         """
     }

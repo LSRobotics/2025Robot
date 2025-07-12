@@ -1,8 +1,8 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants.ElevatorConstants;
-import frc.robot.subsystems.ElevatorSubsystem;
+import frc.robot.subsystems.elevator.ElevatorConstants;
+import frc.robot.subsystems.elevator.ElevatorSubsystem;
 
 public class MannualElevatorCommand extends Command{
     private final ElevatorSubsystem elevator;

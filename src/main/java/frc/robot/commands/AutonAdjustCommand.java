@@ -5,7 +5,7 @@
 package frc.robot.commands;
 
 import frc.robot.Constants.VisionConstants;
-import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.drive.CommandSwerveDrivetrain;
 import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
 

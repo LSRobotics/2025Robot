@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.VisionConstants;
 import frc.robot.subsystems.LimelightHelpers.*;
+import frc.robot.subsystems.leds.LEDSubsystem;
 
 public class VisionSubsystem extends SubsystemBase {
   private RawFiducial[] fiducials;

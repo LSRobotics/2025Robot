@@ -1,37 +1,78 @@
-// Copyright 2021-2025 FRC 6328
-// http://github.com/Mechanical-Advantage
-//
-// This program is free software; you can redistribute it and/or
-// modify it under the terms of the GNU General Public License
-// version 3 as published by the Free Software Foundation or
-// available in the root directory of this project.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU General Public License for more details.
-
 package frc.robot;
+import edu.wpi.first.units.measure.Angle;
+import static edu.wpi.first.units.Units.Radian;
 
-import edu.wpi.first.wpilibj.RobotBase;
-
-/**
- * This class defines the runtime mode used by AdvantageKit. The mode is always "real" when running
- * on a roboRIO. Change the value of "simMode" to switch between "sim" (physics sim) and "replay"
- * (log replay from a file).
- */
-public final class Constants {
-  public static final Mode simMode = Mode.SIM;
-  public static final Mode currentMode = RobotBase.isReal() ? Mode.REAL : simMode;
-
-  public static enum Mode {
-    /** Running on a real robot. */
-    REAL,
-
-    /** Running a physics simulator. */
-    SIM,
-
-    /** Replaying from a log file. */
-    REPLAY
+public class Constants {
+  public static class UniversalConstants {
+    public static final String bestProgrammer = "Gabriel Kuzowsky"; 
   }
+
+  public static class MultiversalConstants {
+    public static final String bestProgrammer = "Ben Bell";
+  }
+
+  public static class GodConstants{
+    public static final String bestProgrammer = "Michael Stauffer";
+  }
+
+  public static class OperatorConstants {
+    public static final int kDriverControllerPort = 0;
+    public static final int kOperatorControllerPort = 1;
+  }
+
+  public static class SwerveSpeedConsts{
+    public static final double slowSpeed = 0.5;
+    public static final double bargeSpeed = 1d;
+    public static final double L4Speed = 1d;
+    public static final double L3Speed = 1d;
+    public static final double L2Speed = 3d;
+    public static final double L1Speed = 3d;
+  }
+
+  public static class ShooterConstants {
+    public static final int shooterMotorID = 30;
+    public static final double intakeSpeed = -0.2;
+    public static final double slowShooterSpeed = -0.4;
+    public static final double algaeSpeed = 0.4;
+    public static final double bargeAlgaeShooterSpeed = -0.6; // -0.2
+    public static final double slowAlgaeSpeed = 0.1;
+    public static final double L1ShooterSpeed = -0.2;
+  }
+  public static class VisionConstants {
+    public static final String LIMELIGHT_NAME = "";
+    /* 
+    public static final double MOVE_P = 0.300000;
+    public static final double MOVE_I = 0.000000;
+    public static final double MOVE_D = 0.000600;
+
+    public static final double ROTATE_P = 0.030000;
+    public static final double ROTATE_I = 0.000000;
+    public static final double ROTATE_D = 0.000100;
+    */
+
+    public static final double X_REEF_ALIGNMENT_P = 0.15;
+    public static final double Y_REEF_ALIGNMENT_P = 0.5;
+    public static final double ROT_REEF_ALIGNMENT_P = 0.03;
+    
+    public static final double ROT_SETPOINT_REEF_ALIGNMENT = 0;  
+    public static final double ROT_TOLERANCE_REEF_ALIGNMENT = 0.5;
+    public static final double X_SETPOINT_REEF_ALIGNMENT = -0.5;  
+    public static final double X_TOLERANCE_REEF_ALIGNMENT = 0.005;
+    public static final double Y_SETPOINT_REEF_ALIGNMENT = 0.4;  
+    public static final double Y_TOLERANCE_REEF_ALIGNMENT = 0.1;
+  
+    public static final double waitTime = 1;
+    public static final double validationTime = 0.3;
+
+    public static final double branchAngle = 21d; //Degrees
+    public static final double branchTolerance = 2.5; //Degrees
+
+    public static final double AlgaeAngle = 0d; //Degrees
+    public static final double AlgaeTolerance = 3.5d; //Degrees
+
+    public static final double TOLERANCE = 0.01;
+
+    public static final double alignSpeed = 0.35;
+  }
+
 }

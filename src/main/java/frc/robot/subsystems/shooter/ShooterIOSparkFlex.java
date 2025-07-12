@@ -1,0 +1,36 @@
+package frc.robot.subsystems.shooter;
+
+import com.revrobotics.spark.SparkFlex;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+
+public class ShooterIOSparkFlex implements ShooterIO{
+    private final SparkFlex shooterMotor = new SparkFlex(ShooterConstants.shooterMotorID, MotorType.kBrushless);
+
+    public ShooterIOSparkFlex() {
+    }
+
+    @Override
+    public void updateInputs(ShooterIOInputs inputs) {
+        inputs.motorTemperatureCelsius = shooterMotor.getMotorTemperature();
+        inputs.appliedVolts = shooterMotor.getAppliedOutput() * shooterMotor.getBusVoltage();
+        inputs.currentAmps = shooterMotor.getOutputCurrent();
+        inputs.motorOutputPercent = shooterMotor.getAppliedOutput();
+        inputs.velocityRPM = shooterMotor.getEncoder().getVelocity() * 60.0; // Convert to RPM
+    }
+
+    @Override
+    public void setVoltage(double volts) {
+        shooterMotor.setVoltage(volts);
+    }
+    @Override
+    public void setSpeed(double percent) {
+        shooterMotor.set(percent);
+    }
+
+    @Override
+    public void stop() {
+        shooterMotor.stopMotor();
+    }
+
+}

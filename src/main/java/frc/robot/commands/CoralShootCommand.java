@@ -4,8 +4,8 @@
 
 package frc.robot.commands;
 
-import frc.robot.subsystems.ShooterSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.subsystems.shooter.ShooterSubsystem;
 
 public class CoralShootCommand extends Command {
   private final ShooterSubsystem m_shooter;

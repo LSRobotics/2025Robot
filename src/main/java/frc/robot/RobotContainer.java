@@ -40,10 +40,10 @@ import frc.robot.subsystems.drive.CommandSwerveDrivetrain;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.leds.LEDIOBlinken;
 import frc.robot.subsystems.leds.LEDSubsystem;
+import frc.robot.subsystems.shooter.ShooterSubsystem;
 
 import com.ctre.phoenix6.SignalLogger;
 
-import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.Constants.ShooterConstants;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;

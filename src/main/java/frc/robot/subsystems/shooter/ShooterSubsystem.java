@@ -2,23 +2,31 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.subsystems;
+package frc.robot.subsystems.shooter;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
+
+import org.littletonrobotics.junction.Logger;
 
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
 public class ShooterSubsystem extends SubsystemBase {
-  private final SparkFlex shooterMotor;
+  private final ShooterIO io;
+  private final ShooterIOInputsAutoLogged inputs = new ShooterIOInputsAutoLogged();
   
-  public ShooterSubsystem() {
-    shooterMotor = new SparkFlex(Constants.ShooterConstants.shooterMotorID, MotorType.kBrushless);
+  public ShooterSubsystem(ShooterIO io) {
+    this.io = io;
   }
   
   public void runShooterMotor(double speed) {
-    shooterMotor.set(speed);
+    io.setSpeed(speed);
+  }
+
+  @Override
+  public void periodic(){
+    io.updateInputs(inputs);
+    Logger.processInputs("Shooter", inputs);
   }
 
   

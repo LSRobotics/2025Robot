@@ -5,8 +5,8 @@
 package frc.robot.commands;
 
 import frc.robot.Constants.ShooterConstants;
-import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
+import frc.robot.subsystems.shooter.ShooterSubsystem;
 
 import java.util.function.BooleanSupplier;
 import edu.wpi.first.wpilibj2.command.Command;

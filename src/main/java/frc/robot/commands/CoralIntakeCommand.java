@@ -4,7 +4,7 @@
 
 package frc.robot.commands;
 
-import frc.robot.Constants.ShooterConstants;
+import frc.robot.subsystems.shooter.ShooterConstants;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
 

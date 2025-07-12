@@ -44,7 +44,9 @@ import frc.robot.subsystems.shooter.ShooterSubsystem;
 
 import com.ctre.phoenix6.SignalLogger;
 
-import frc.robot.Constants.ShooterConstants;
+import frc.robot.subsystems.shooter.ShooterConstants;
+import frc.robot.subsystems.shooter.ShooterIOSparkFlex;
+
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
@@ -74,7 +76,7 @@ public class RobotContainer {
   //The robot's subsystems and commands are defined here...
   private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
   private final ClawSubsystem m_claw = new ClawSubsystem(new ClawIOTalonFX());
-  private final ShooterSubsystem m_shooter = new ShooterSubsystem();
+  private final ShooterSubsystem m_shooter = new ShooterSubsystem(new ShooterIOSparkFlex());
   private final ElevatorSubsystem m_elevator = new ElevatorSubsystem(new ElevatorIOSparkMax());
 
 

@@ -27,7 +27,7 @@ task createAdditionalBuildInfo {
         def vendorMeta = []
         def vendordepsDir = file("vendordeps")
         if (vendordepsDir.exists()) {
-            vendordepsDir.eachFileMatch(~/.*\.json/) { f -> ; //type:ignore
+            vendordepsDir.eachFileMatch(~/^(?=.*[a-zA-Z]).*\.json$/) { f -> ; //type:ignore
                 def json = new groovy.json.JsonSlurper().parseText(f.text)
                 if (json.name && json.version) {
                     vendorMeta << "        \"${json.name}:${json.version}\""
@@ -37,19 +37,19 @@ task createAdditionalBuildInfo {
 
         def file = file("src/main/java/frc/robot/SystemBuildConstants.java")
         file.text = """
-        package frc.robot;
+package frc.robot;
 
-        public class SystemBuildConstants {
-            public static final String JAVA_VERSION = "${javaVersion}";
-            public static final String GRADLE_VERSION = "${gradleVersion}";
-            public static final String OS_NAME = "${osName}";
-            public static final String OS_VERSION = "${osVersion}";
-            public static final String OS_ARCH = "${osArch}";
-            public static final String BUILD_TYPE = "${buildType}";
-            public static final String[] VENDORLIBS = {
+public class SystemBuildConstants {
+    public static final String JAVA_VERSION = "${javaVersion}";
+    public static final String GRADLE_VERSION = "${gradleVersion}";
+    public static final String OS_NAME = "${osName}";
+    public static final String OS_VERSION = "${osVersion}";
+    public static final String OS_ARCH = "${osArch}";
+    public static final String BUILD_TYPE = "${buildType}";
+    public static final String[] VENDORLIBS = {
 ${vendorMeta.join(",\n")}
-            };
-        }
+    };
+}
         """
     }
 }

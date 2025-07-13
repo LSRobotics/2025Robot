@@ -18,6 +18,7 @@ import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 
+import com.ctre.phoenix6.SignalLogger;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
 /**
@@ -105,6 +106,7 @@ public class Robot extends LoggedRobot {
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
   public void disabledInit() {
+    SignalLogger.stop();
     endOfMatchTimer.cancel();
   }
 
@@ -136,6 +138,8 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void teleopInit() {
+    SignalLogger.start();
+
 
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to

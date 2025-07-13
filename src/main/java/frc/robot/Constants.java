@@ -20,14 +20,6 @@ public class Constants {
     public static final int kOperatorControllerPort = 1;
   }
 
-  public static class SwerveSpeedConsts{
-    public static final double slowSpeed = 0.5;
-    public static final double bargeSpeed = 1d;
-    public static final double L4Speed = 1d;
-    public static final double L3Speed = 1d;
-    public static final double L2Speed = 3d;
-    public static final double L1Speed = 3d;
-  }
 
   public static class VisionConstants {
     public static final String LIMELIGHT_NAME = "";

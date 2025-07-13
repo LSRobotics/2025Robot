@@ -14,6 +14,8 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
 
+import com.ctre.phoenix6.SignalLogger;
+
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -29,6 +31,7 @@ public class OtherLoggers {
 	private static Notifier mainNotifier;
 
 	public static void start(LoggedRobot robot, PowerDistribution pdh) {
+
 		if (enabled) return;
 		enabled = true;
 		OtherLoggers.pdh = pdh;

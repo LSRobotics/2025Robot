@@ -16,6 +16,8 @@ gversion {
 
 task createAdditionalBuildInfo {
     doLast {
+        //Current time
+        def time = new Date().format("yyyy-MM-dd HH:mm:ss z", TimeZone.getTimeZone("America/New_York"))
         def javaVersion = System.getProperty("java.version")
         def gradleVersion = gradle.gradleVersion
         def osName = System.getProperty("os.name")
@@ -26,32 +28,36 @@ task createAdditionalBuildInfo {
         def vendorMeta = []
         def vendordepsDir = file("vendordeps")
         if (vendordepsDir.exists()) {
-            vendordepsDir.eachFileMatch(~/^(?=.*[a-zA-Z]).*\.json$/) { f -> ; //type:ignore
+            vendordepsDir.eachFileMatch(~/^(?=.*[a-zA-Z]).*\.json$/) { f ->
                 def json = new groovy.json.JsonSlurper().parseText(f.text)
                 if (json.name && json.version) {
-                    vendorMeta << "        \"${json.name}:${json.version}\""
+                    vendorMeta << "\"${json.name}:${json.version}\""
                 }
             }
         }
 
-        def file = file("src/main/java/frc/robot/SystemBuildConstants.java")
-        file.text = """
-package frc.robot;
+        def vendorLibs = vendorMeta.collect { "        $it" }.join(",\n")
 
-public class SystemBuildConstants {
-    public static final String JAVA_VERSION = "${javaVersion}";
-    public static final String GRADLE_VERSION = "${gradleVersion}";
-    public static final String OS_NAME = "${osName}";
-    public static final String OS_VERSION = "${osVersion}";
-    public static final String OS_ARCH = "${osArch}";
-    public static final String BUILD_TYPE = "${buildType}";
-    public static final String[] VENDORLIBS = {
-${vendorMeta.join(",\n")}
-    };
-}
-        """
+        def outputFile = file("src/main/java/frc/robot/SystemBuildConstants.java")
+        outputFile.text = """
+            |package frc.robot;
+            |
+            |public class SystemBuildConstants {
+            |    public static final String BUILD_TIME = "${time}";
+            |    public static final String JAVA_VERSION = "${javaVersion}";
+            |    public static final String GRADLE_VERSION = "${gradleVersion}";
+            |    public static final String OS_NAME = "${osName}";
+            |    public static final String OS_VERSION = "${osVersion}";
+            |    public static final String OS_ARCH = "${osArch}";
+            |    public static final String BUILD_TYPE = "${buildType}";
+            |    public static final String[] VENDORLIBS = {
+${vendorLibs.split('\n').collect { "            |$it" }.join('\n')}
+            |    };
+            |}
+        """.stripMargin("|")
     }
 }
+
 compileJava.dependsOn(createAdditionalBuildInfo)
 
 

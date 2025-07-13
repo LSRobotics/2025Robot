@@ -58,6 +58,7 @@ ${vendorLibs.split('\n').collect { "            |$it" }.join('\n')}
     }
 }
 
+
 compileJava.dependsOn(createAdditionalBuildInfo)
 
 

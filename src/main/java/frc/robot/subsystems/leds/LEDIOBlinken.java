@@ -20,7 +20,7 @@ public class LEDIOBlinken implements LEDIO {
     @Override
     public void setLEDColor(double color) {
         if (color < -1d || color > 1d) {
-            DriverStation.reportWarning("PWM color value must be between -1 and 1, inclusive. Provided: " + color, false);
+            DriverStation.reportWarning("PWM color value must be between -1 and 1, inclusive. Provideed: " + color, false);
         }
         blinken.set(color);
     }

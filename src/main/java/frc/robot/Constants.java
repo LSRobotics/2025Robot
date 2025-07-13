@@ -1,6 +1,5 @@
 package frc.robot;
-import edu.wpi.first.units.measure.Angle;
-import static edu.wpi.first.units.Units.Radian;
+
 
 public class Constants {
   public static class UniversalConstants {

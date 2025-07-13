@@ -8,27 +8,17 @@ import edu.wpi.first.hal.can.CANStatus;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.PowerDistribution;
-import edu.wpi.first.wpilibj.RobotController;
-import edu.wpi.first.wpilibj.TimedRobot;
+
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
-
-import com.ctre.phoenix6.SignalLogger;
-
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.time.Duration;
 
 public class OtherLoggers {
 	private static boolean enabled = false;
 	private static final CANStatus status = new CANStatus();
 	private static PowerDistribution pdh;
 
-	private static Notifier radioNotifier;
 	private static Notifier mainNotifier;
 
 	public static void start(LoggedRobot robot, PowerDistribution pdh) {

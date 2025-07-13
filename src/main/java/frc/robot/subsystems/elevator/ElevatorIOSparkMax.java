@@ -9,7 +9,6 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.wpilibj.DigitalInput;
-import frc.robot.subsystems.elevator.ElevatorIO.ElevatorIOInputs;
 
 public class ElevatorIOSparkMax implements ElevatorIO {
     private final SparkMax m_elevatorMotor1 = new SparkMax(ElevatorConstants.kMotorID, MotorType.kBrushless);

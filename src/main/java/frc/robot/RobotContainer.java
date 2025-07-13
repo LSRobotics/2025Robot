@@ -20,13 +20,11 @@ import frc.robot.subsystems.drive.SwerveConstants.SwerveSpeedConsts;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.claw.ClawConstants;
-import frc.robot.subsystems.claw.ClawIO;
 import frc.robot.subsystems.claw.ClawIOTalonFX;
 import frc.robot.subsystems.elevator.ElevatorConstants;
 import frc.robot.subsystems.elevator.ElevatorIOSparkMax;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.AlgaeIntakeCommand;
-import frc.robot.commands.AlignCommand;
 import frc.robot.commands.AutonAdjustCommand;
 import frc.robot.commands.AutonAlgaeAlignCommand;
 import frc.robot.commands.MannualElevatorCommand;
@@ -43,7 +41,6 @@ import frc.robot.subsystems.leds.LEDIOBlinken;
 import frc.robot.subsystems.leds.LEDSubsystem;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
 
-import com.ctre.phoenix6.SignalLogger;
 
 import frc.robot.subsystems.shooter.ShooterConstants;
 import frc.robot.subsystems.shooter.ShooterIOSparkFlex;
@@ -51,8 +48,7 @@ import frc.robot.subsystems.shooter.ShooterIOSparkFlex;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
-import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.math.geometry.Rotation2d;
+
 import edu.wpi.first.net.PortForwarder;
 import frc.robot.commands.ClawToPositionCommand;
 import frc.robot.commands.CoralIntakeCommand;
@@ -65,7 +61,6 @@ import com.playingwithfusion.TimeOfFlight.RangingMode;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -75,7 +70,6 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
  */
 public class RobotContainer {
   //The robot's subsystems and commands are defined here...
-  private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
   private final ClawSubsystem m_claw = new ClawSubsystem(new ClawIOTalonFX());
   private final ShooterSubsystem m_shooter = new ShooterSubsystem(new ShooterIOSparkFlex());
   private final ElevatorSubsystem m_elevator = new ElevatorSubsystem(new ElevatorIOSparkMax());

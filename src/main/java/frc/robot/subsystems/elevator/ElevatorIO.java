@@ -2,9 +2,7 @@ package frc.robot.subsystems.elevator;
 
 import org.littletonrobotics.junction.AutoLog;
 
-import com.revrobotics.spark.SparkMax;
-import com.revrobotics.RelativeEncoder;
-import edu.wpi.first.wpilibj.DigitalInput;
+
 
 public interface ElevatorIO {
 

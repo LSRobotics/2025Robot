@@ -2,7 +2,6 @@ package frc.robot.subsystems.shooter;
 
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 public class ShooterIOSparkFlex implements ShooterIO{
     private final SparkFlex shooterMotor = new SparkFlex(ShooterConstants.shooterMotorID, MotorType.kBrushless);

@@ -1,6 +1,5 @@
 package frc.robot.subsystems.leds;
 import edu.wpi.first.wpilibj.DriverStation;
-import com.ctre.phoenix6.StatusSignal;
 
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
 

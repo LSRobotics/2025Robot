@@ -11,6 +11,7 @@ public interface ShooterIO {
     public double currentAmps = 0.0;
     public double motorTemperatureCelsius = 0.0;
     public double motorOutputPercent = 0.0;
+    public double shooterSpeed = 0.0;
   }
 
   public default void updateInputs(ShooterIOInputs inputs) {}

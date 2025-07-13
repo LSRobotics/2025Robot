@@ -37,6 +37,10 @@ public class ClawSubsystem extends SubsystemBase {
   public void motorVoltage(double voltage) {
     io.setClawVoltage(voltage);
   }
+
+  public double getClawMotorSpeed() {
+    return inputs.clawVelocity;
+  }
   
   @Override
   public void periodic() {

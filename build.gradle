@@ -21,9 +21,6 @@ task createAdditionalBuildInfo {
         def javaVersion = System.getProperty("java.version")
         def gradleVersion = gradle.gradleVersion
         def osName = System.getProperty("os.name")
-        def osVersion = System.getProperty("os.version")
-        def osArch = System.getProperty("os.arch")
-        def buildType = project.hasProperty('buildType') ? project.buildType : "default"
 
         def vendorMeta = []
         def vendordepsDir = file("vendordeps")
@@ -47,9 +44,6 @@ task createAdditionalBuildInfo {
             |    public static final String JAVA_VERSION = "${javaVersion}";
             |    public static final String GRADLE_VERSION = "${gradleVersion}";
             |    public static final String OS_NAME = "${osName}";
-            |    public static final String OS_VERSION = "${osVersion}";
-            |    public static final String OS_ARCH = "${osArch}";
-            |    public static final String BUILD_TYPE = "${buildType}";
             |    public static final String[] VENDORLIBS = {
 ${vendorLibs.split('\n').collect { "            |$it" }.join('\n')}
             |    };

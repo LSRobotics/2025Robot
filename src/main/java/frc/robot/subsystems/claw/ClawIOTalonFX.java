@@ -18,6 +18,7 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
+import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
 
 public class ClawIOTalonFX implements ClawIO {
@@ -27,6 +28,7 @@ public class ClawIOTalonFX implements ClawIO {
     private final StatusSignal<Current> clawMotorCurrent = clawMotor.getStatorCurrent();
     private final StatusSignal<Voltage> clawVoltage = clawMotor.getMotorVoltage();
     private final StatusSignal<AngularAcceleration> clawAcceleration = clawMotor.getAcceleration();
+    private final StatusSignal<Temperature> clawMotorTemperature = clawMotor.getDeviceTemp();
 
     private final VoltageOut voltageRequest = new VoltageOut(0.0);
     private final double speedRequest = 0.0;

@@ -27,5 +27,9 @@ public class ShooterSubsystem extends SubsystemBase {
     Logger.processInputs("Shooter", inputs);
   }
 
+  public double getShooterSpeed() {
+    return inputs.shooterSpeed;
+  }
+
   
 }

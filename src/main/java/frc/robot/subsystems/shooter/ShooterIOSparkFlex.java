@@ -16,6 +16,7 @@ public class ShooterIOSparkFlex implements ShooterIO{
         inputs.currentAmps = shooterMotor.getOutputCurrent();
         inputs.motorOutputPercent = shooterMotor.getAppliedOutput();
         inputs.velocityRPM = shooterMotor.getEncoder().getVelocity() * 60.0; // Convert to RPM
+        inputs.shooterSpeed = shooterMotor.get();
     }
 
     @Override
@@ -25,7 +26,9 @@ public class ShooterIOSparkFlex implements ShooterIO{
     @Override
     public void setSpeed(double percent) {
         shooterMotor.set(percent);
+        
     }
+
 
     @Override
     public void stop() {

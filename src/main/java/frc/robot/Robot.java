@@ -52,9 +52,7 @@ public class Robot extends LoggedRobot {
     Logger.recordMetadata("Java Version", SystemBuildConstants.JAVA_VERSION);
     Logger.recordMetadata("Gradle Version", SystemBuildConstants.GRADLE_VERSION);
     Logger.recordMetadata("OS Name", SystemBuildConstants.OS_NAME);
-    Logger.recordMetadata("OS Version", SystemBuildConstants.OS_VERSION);
-    Logger.recordMetadata("OS Arch", SystemBuildConstants.OS_ARCH);
-    Logger.recordMetadata("Build Type", SystemBuildConstants.BUILD_TYPE);
+
 
     // Log each vendorlib version
     // for (String vendorlib : SystemBuildConstants.VENDORLIBS) {

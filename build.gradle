@@ -27,7 +27,7 @@ task createAdditionalBuildInfo {
         def vendorMeta = []
         def vendordepsDir = file("vendordeps")
         if (vendordepsDir.exists()) {
-            vendordepsDir.eachFileMatch(~/.*\.json/) { f -> //type:ignore
+            vendordepsDir.eachFileMatch(~/.*\.json/) { f -> ; //type:ignore
                 def json = new groovy.json.JsonSlurper().parseText(f.text)
                 if (json.name && json.version) {
                     vendorMeta << "        \"${json.name}:${json.version}\""

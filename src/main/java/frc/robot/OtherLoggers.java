@@ -40,7 +40,7 @@ public class OtherLoggers {
                 logCan();
                 logPdh();
             } catch (Exception e) {
-                DriverStation.reportError("ExtrasLogger exception: " + e, true);
+                DriverStation.reportError("OtherLoggers exception: " + e, true);
             }
         });
         mainNotifier.startPeriodic(0.04); //25 hz

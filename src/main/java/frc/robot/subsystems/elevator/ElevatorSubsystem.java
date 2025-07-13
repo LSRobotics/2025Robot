@@ -4,35 +4,14 @@
 
 package frc.robot.subsystems.elevator;
 
-import edu.wpi.first.math.controller.ElevatorFeedforward;
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Configs;
-import frc.robot.Constants;
-import frc.robot.Configs.ElevatorConfigs;
-import frc.robot.subsystems.elevator.ElevatorConstants;
-import frc.robot.Constants.SwerveSpeedConsts;
 
-import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.config.SparkBaseConfig;
-import com.revrobotics.spark.config.SparkMaxConfig;
-import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-import com.revrobotics.spark.SparkMax;
-import com.revrobotics.spark.SparkBase.ControlType;
-import com.revrobotics.spark.SparkBase.PersistMode;
-import com.revrobotics.spark.SparkBase.ResetMode;
-import com.revrobotics.spark.SparkClosedLoopController;
+import frc.robot.subsystems.drive.SwerveConstants.SwerveSpeedConsts;
+
+
 
 import org.littletonrobotics.junction.Logger;
-
-import com.revrobotics.RelativeEncoder;
-import edu.wpi.first.units.Measure;
-import edu.wpi.first.units.DistanceUnit;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
-
 public class ElevatorSubsystem extends SubsystemBase {
 
   public boolean isZeroed = false;

@@ -57,12 +57,12 @@ public class Robot extends LoggedRobot {
     Logger.recordMetadata("Build Type", SystemBuildConstants.BUILD_TYPE);
 
     // Log each vendorlib version
-    for (String vendorlib : SystemBuildConstants.VENDORLIBS) {
-      String[] parts = vendorlib.split(":", 2);
-      if (parts.length == 2) {
-        Logger.recordMetadata("VendorLib: " + parts[0], parts[1]);
-      }
-    }
+    // for (String vendorlib : SystemBuildConstants.VENDORLIBS) {
+    //   String[] parts = vendorlib.split(":", 2);
+    //   if (parts.length == 2) {
+    //     Logger.recordMetadata("VendorLib: " + parts[0], parts[1]);
+    //   }
+    // }
 
     Logger.addDataReceiver(new WPILOGWriter()); // Log to a USB stick ("/U/logs")
     Logger.addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables

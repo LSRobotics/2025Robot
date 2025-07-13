@@ -23,7 +23,6 @@ task createAdditionalBuildInfo {
         def osArch = System.getProperty("os.arch")
         def buildType = project.hasProperty('buildType') ? project.buildType : "default"
 
-        // Parse all vendordeps JSON files for name/version
         def vendorMeta = []
         def vendordepsDir = file("vendordeps")
         if (vendordepsDir.exists()) {

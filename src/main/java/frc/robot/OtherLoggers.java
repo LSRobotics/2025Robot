@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
@@ -31,6 +32,7 @@ public class OtherLoggers {
 	private static Notifier mainNotifier;
 
 	public static void start(LoggedRobot robot, PowerDistribution pdh) {
+		SmartDashboard.putData("PDH",pdh);
 
 		if (enabled) return;
 		enabled = true;

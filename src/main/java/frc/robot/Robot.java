@@ -47,7 +47,7 @@ public class Robot extends LoggedRobot {
     Logger.recordMetadata("GitBranch", GitBuildConstants.GIT_BRANCH);
     Logger.recordMetadata("WPILIB Version", GitBuildConstants.VERSION);
     Logger.recordMetadata("Is Real", ""+Robot.isReal()); 
-    Logger.recordMetadata("Dirty", ""+GitBuildConstants.DIRTY);
+    Logger.recordMetadata("Uncommited Changes", ""+GitBuildConstants.DIRTY);
 
     Logger.recordMetadata("Java Version", SystemBuildConstants.JAVA_VERSION);
     Logger.recordMetadata("Gradle Version", SystemBuildConstants.GRADLE_VERSION);

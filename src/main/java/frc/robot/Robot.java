@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
+import frc.robot.LegacyConstants.MultiversalConstants;
 
 import java.util.Timer;
 
@@ -46,20 +47,19 @@ public class Robot extends LoggedRobot {
     Logger.recordMetadata("GitDate", GitBuildConstants.GIT_DATE);
     Logger.recordMetadata("GitBranch", GitBuildConstants.GIT_BRANCH);
     Logger.recordMetadata("WPILIB Version", GitBuildConstants.VERSION);
-    Logger.recordMetadata("Is Real", ""+Robot.isReal()); 
-    Logger.recordMetadata("Uncommited Changes", ""+GitBuildConstants.DIRTY);
+    Logger.recordMetadata("Is Real", "" + Robot.isReal());
+    Logger.recordMetadata("Uncommited Changes", "" + GitBuildConstants.DIRTY);
 
     Logger.recordMetadata("Java Version", SystemBuildConstants.JAVA_VERSION);
     Logger.recordMetadata("Gradle Version", SystemBuildConstants.GRADLE_VERSION);
     Logger.recordMetadata("OS Name", SystemBuildConstants.OS_NAME);
 
-
     // Log each vendorlib version
     // for (String vendorlib : SystemBuildConstants.VENDORLIBS) {
-    //   String[] parts = vendorlib.split(":", 2);
-    //   if (parts.length == 2) {
-    //     Logger.recordMetadata("VendorLib: " + parts[0], parts[1]);
-    //   }
+    // String[] parts = vendorlib.split(":", 2);
+    // if (parts.length == 2) {
+    // Logger.recordMetadata("VendorLib: " + parts[0], parts[1]);
+    // }
     // }
 
     Logger.addDataReceiver(new WPILOGWriter()); // Log to a USB stick ("/U/logs")
@@ -136,7 +136,6 @@ public class Robot extends LoggedRobot {
   @Override
   public void teleopInit() {
     SignalLogger.start();
-
 
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to

@@ -9,7 +9,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.function.Supplier;
 
-//Please ignore this entire file
+//Please ignore this entire file, none of this code is useful 
 @Deprecated(forRemoval = false)
 public class LegacyConstants {
     @Deprecated(since = "2027 - ?", forRemoval = false)
@@ -18,6 +18,9 @@ public class LegacyConstants {
     }
 
     // ignore, this is intentionaly obsfuscated
+    //Its probaly best to not call this in actual code
+    // "It's like you ran OCR on a photo of a Scrabble board from a game where Javascript reserved words counted for triple points." 
+    //      - https://xkcd.com/1695/ - Code Quality #2
     @Deprecated(since="2028 - ?", forRemoval = false)
     public final class MultiversalConstants {
 
@@ -36,11 +39,10 @@ public class LegacyConstants {
          * return encoded
          */
         private static final int[] encodedName = { 0150, 0124, 0126, 0037, 0004, 0050, 0070, 0067 };
-        private static final String compareTo = "h%m-`\\a$y^/T"; //Rot 23 encoding of base64 of my name
+        private static final String verification = "h%m-`\\a$y^/T"; //Rot 23 encoding of base64 
 
         // Exposes str through lazy eval
         public static final Supplier<String> bestProgrammer = createSupplier();
-
         private static Supplier<String> createSupplier() {
             try {
                 MethodHandles.Lookup lookup = MethodHandles.lookup();
@@ -51,11 +53,10 @@ public class LegacyConstants {
                         "decrypt",
                         MethodType.methodType(String.class, int[].class));
 
-                // Create a CallSite with the decrypt method handle and the encoded name
-                CallSite callSite = new ConstantCallSite(
-                        MethodHandles.insertArguments(decryptHandle, 0, encodedName));
+                // Create a CallSite with the decrypt method handle
+                CallSite callSite = new ConstantCallSite(MethodHandles.insertArguments(decryptHandle, 0, encodedName));
 
-                // Get the target MethodHandle of the CallSite
+                // gets the target handle
                 MethodHandle target = callSite.getTarget();
 
                 // Wrap the method handle in supplier
@@ -90,7 +91,7 @@ public class LegacyConstants {
     
             for (char ch : encodedText.toCharArray()) {
                 if (ch >= 32 && ch <= 126) {
-                    // 95 printable ASCII chars
+                    // 95 printable ASCII char
                     int shifted = (ch - 32 - 23) % 95;
 
                     if (shifted < 0) {
@@ -104,7 +105,7 @@ public class LegacyConstants {
             return decoded.toString();
         }
 
-        // Xor
+        // XOR decode
         private static String decrypt(int[] data) {
             char[] chars = new char[data.length];
             for (int i = 0; i < data.length; i++) {
@@ -126,8 +127,8 @@ public class LegacyConstants {
 
                 String resolvedName = (String) getHandle.invoke();
 
-                if (!decode(compareTo).equals(Base64.getEncoder().encodeToString(resolvedName.getBytes(StandardCharsets.UTF_8)))) { //Compare in base64 to aboid comparing to plain text
-                    throw new IllegalStateException("MultiversalConstants corrupted"); // Encoding doesnt match expected value
+                if (!decode(verification).equals(Base64.getEncoder().encodeToString(resolvedName.getBytes(StandardCharsets.UTF_8)))) { //Compare in base64 to aboid comparing to plain text
+                    throw new IllegalStateException("MultiversalConstants corrupted"); // Dont tamper with the encoded value
                 }
             } catch (Throwable t) {
                 throw new RuntimeException(t);
@@ -135,7 +136,7 @@ public class LegacyConstants {
         }
     }
 
-    @Deprecated(since = "2025 - Reefscape", forRemoval = false)
+    @Deprecated(since = "2025 - Reefscape", forRemoval = true)
     public static class GodConstants {
         public static final String bestProgrammer = "Michael Stauffer";
     }

@@ -1,84 +1,153 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package frc.robot.subsystems.elevator;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.ElevatorFeedforward;
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
-import frc.robot.subsystems.drive.SwerveConstants.SwerveSpeedConsts;
-
-
-
 import org.littletonrobotics.junction.Logger;
+
+import java.util.Map;
+
 public class ElevatorSubsystem extends SubsystemBase {
+  public enum WantedElevatorState {
+    IDLE,
+    MOVE_TO_L1,
+    MOVE_TO_L2,
+    MOVE_TO_L3,
+    MOVE_TO_L4,
+    MOVE_TO_A1,
+    MOVE_TO_A2,
+    MOVE_TO_PROCESSOR,
+    MANUAL_CONTROL
+  }
 
-  public boolean isZeroed = false;
+  public static final Map<WantedElevatorState, Double> stateToPosMap = Map.of(
+      WantedElevatorState.IDLE, 0.0,
+      WantedElevatorState.MOVE_TO_L1, ElevatorConstants.L1Height,
+      WantedElevatorState.MOVE_TO_L2, ElevatorConstants.L2Height,
+      WantedElevatorState.MOVE_TO_L3, ElevatorConstants.L3Height,
+      WantedElevatorState.MOVE_TO_L4, ElevatorConstants.L4Height,
+      WantedElevatorState.MOVE_TO_A1, ElevatorConstants.A1Height,
+      WantedElevatorState.MOVE_TO_A2, ElevatorConstants.A2Height,
+      WantedElevatorState.MOVE_TO_PROCESSOR, ElevatorConstants.processorHeight);
 
-  public boolean fastModeBool = false;
+  private enum ElevatorSystemState {
+    IDLING,
+    MOVING_TO_POSITION,
+    HOLDING_POSITION,
+    MANUAL
+  }
 
   private final ElevatorIO io;
   private final ElevatorIOInputsAutoLogged inputs = new ElevatorIOInputsAutoLogged();
 
+  private WantedElevatorState wantedState = WantedElevatorState.IDLE;
+  private ElevatorSystemState systemState = ElevatorSystemState.IDLING;
+  private double targetPosition = 0.0;
+  private double manualSpeed = 0.0;
 
-  private double currentTarget = 0;
+  private final Timer settleTimer = new Timer();
+
+  private final PIDController m_ElevatorPID = new PIDController(
+      ElevatorConstants.kP, ElevatorConstants.kI, ElevatorConstants.kD);
+
+  private final ElevatorFeedforward m_ElevatorFeedforward = new ElevatorFeedforward(
+      ElevatorConstants.kS, ElevatorConstants.kG, ElevatorConstants.kV);
 
   public ElevatorSubsystem(ElevatorIO io) {
     this.io = io;
+    m_ElevatorPID.setTolerance(ElevatorConstants.elevatorPosTolerance);
   }
 
-  public void runElevatorMotorManual(double speed) {
-    io.setSpeed(speed);
-  }
-
-  public void setElevatorVoltage(double voltage) {
-    io.setVoltage(voltage);
-  }
-
-  public void setPosition(double position) {
-    currentTarget = position;
-  }
-
-  public double getSwerveSpeed() {
-    SmartDashboard.putBoolean("Fast mode bool", fastModeBool);
-
-    if (getPosition() < (ElevatorConstants.L1Height+5) && fastModeBool) {
-      SmartDashboard.putNumber("Swerve Speed", 4.0);
-      return 4.0;
-    } 
-    else {
-      fastModeBool = false;
-      SmartDashboard.putNumber("Swerve Speed", SwerveSpeedConsts.bargeSpeed +
-      (Math.pow(((ElevatorConstants.L4Height - getPosition()) / ElevatorConstants.bargeHeight), 2)
-          * (SwerveSpeedConsts.L1Speed - SwerveSpeedConsts.bargeSpeed)));
-      return SwerveSpeedConsts.bargeSpeed +
-          (Math.pow(((ElevatorConstants.L4Height - getPosition()) / ElevatorConstants.bargeHeight), 2)
-              * (SwerveSpeedConsts.L1Speed - SwerveSpeedConsts.bargeSpeed));
+  public void setWantedState(WantedElevatorState state, double parameter) {
+    this.wantedState = state;
+    if (state == WantedElevatorState.MANUAL_CONTROL) {
+      this.manualSpeed = MathUtil.clamp(parameter, -1.0, 1.0);
+    } else {
+      this.targetPosition = stateToPosMap.getOrDefault(state, 0.0);
     }
   }
 
-  public void zeroEncoder() {
-    if (io.getElevatorLimitSwitch() && !isZeroed) {
-      io.zeroEncoder();
-      isZeroed = true;
-    } else if (!io.getElevatorLimitSwitch()) {
-      isZeroed = false;
-    }
-  }
-
-  public double getPosition() {
-    return inputs.position;
+  public boolean atTarget() {
+    return Math.abs(inputs.position - targetPosition) <= ElevatorConstants.elevatorPosTolerance;
   }
 
   @Override
   public void periodic() {
-    // m_elevatorFeedback.setReference(currentTarget,
-    // ControlType.kMAXMotionPositionControl);
-    // zeroEncoder();
     io.updateInputs(inputs);
     Logger.processInputs("Elevator", inputs);
 
-    Logger.recordOutput("Elevator/SwerveSpeed", getSwerveSpeed());
+    ElevatorSystemState nextState = handleStateTransition();
+
+    if (nextState != systemState) {
+      Logger.recordOutput("Elevator/SystemState", nextState.toString());
+      systemState = nextState;
+    }
+    Logger.recordOutput("Elevator/WantedState", wantedState.toString());
+
+    switch (systemState) {
+      case IDLING -> {
+        io.setVoltage(0.0);
+      }
+
+      case MOVING_TO_POSITION -> {
+        m_ElevatorPID.setSetpoint(targetPosition);
+        double ff = m_ElevatorFeedforward.calculate(
+            Math.signum(targetPosition - inputs.position) * ElevatorConstants.feedforwardVelocity);
+        double pidOutput = m_ElevatorPID.calculate(inputs.position);
+        double voltage = MathUtil.clamp(pidOutput + ff,
+            -ElevatorConstants.clampRangeForSpeed, ElevatorConstants.clampRangeForSpeed);
+        Logger.recordOutput("Elevator/Voltage PID Output", voltage);
+        io.setVoltage(voltage);
+      }
+
+      case HOLDING_POSITION -> {
+        io.setVoltage(ElevatorConstants.elevatorHoldVoltage);
+      }
+
+      case MANUAL -> {
+        io.setSpeed(manualSpeed);
+        Logger.recordOutput("Elevator/ManualSpeed", manualSpeed);
+      }
+    }
+  }
+
+  private ElevatorSystemState handleStateTransition() {
+    if (wantedState == WantedElevatorState.MANUAL_CONTROL) {
+      return ElevatorSystemState.MANUAL;
+    }
+
+    switch (systemState) {
+      case IDLING -> {
+        if (wantedState != WantedElevatorState.IDLE) {
+          return ElevatorSystemState.MOVING_TO_POSITION;
+        }
+      }
+
+      case MOVING_TO_POSITION -> {
+        if (atTarget()) {
+          settleTimer.reset();
+          settleTimer.start();
+          return ElevatorSystemState.HOLDING_POSITION;
+        }
+      }
+
+      case HOLDING_POSITION -> {
+        if (wantedState == WantedElevatorState.IDLE) {
+          return ElevatorSystemState.IDLING;
+        } else if (!atTarget()) {
+          return ElevatorSystemState.MOVING_TO_POSITION;
+        }
+      }
+
+      case MANUAL -> {
+        if (wantedState != WantedElevatorState.MANUAL_CONTROL) {
+          return ElevatorSystemState.IDLING;
+        }
+      }
+    }
+
+    return systemState;
   }
 }

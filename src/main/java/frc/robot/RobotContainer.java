@@ -28,7 +28,7 @@ import frc.robot.commands.AlgaeIntakeCommand;
 import frc.robot.commands.AutonAdjustCommand;
 import frc.robot.commands.AutonAlgaeAlignCommand;
 // import frc.robot.commands.MannualElevatorCommand;
-import frc.robot.commands.ManualClawCommand;
+// import frc.robot.commands.ManualClawCommand;
 import frc.robot.commands.CoralShootCommand;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.ExampleSubsystem;
@@ -50,7 +50,7 @@ import com.pathplanner.lib.auto.NamedCommands;
 
 
 import edu.wpi.first.net.PortForwarder;
-import frc.robot.commands.ClawToPositionCommand;
+// import frc.robot.commands.ClawToPositionCommand;
 import frc.robot.commands.CoralIntakeCommand;
 // import frc.robot.commands.ElevatorToPositionCommand;
 import java.util.function.BooleanSupplier;
@@ -115,8 +115,8 @@ public class RobotContainer {
   public final VisionSubsystem m_Vision = new VisionSubsystem(m_LEDs);
   
   private final TimeOfFlight m_rangeSensor = new TimeOfFlight(ClawConstants.sensorID);
-  private final BooleanSupplier intermediatePos = () -> Math.abs((m_claw.getClawPosition().minus(ClawConstants.intermediateClawPos)).in(Radian))<ClawConstants.tolerance.in(Radian);
-  public final Trigger clawAtIntermediate = new Trigger(intermediatePos);
+//   private final BooleanSupplier intermediatePos = () -> Math.abs((m_claw.getClawPosition().minus(ClawConstants.intermediateClawPos)).in(Radian))<ClawConstants.tolerance.in(Radian);
+//   public final Trigger clawAtIntermediate = new Trigger(intermediatePos);
 
    public RobotContainer() {
       for (int port = 5800; port <= 5809; port++) {
@@ -376,8 +376,8 @@ public class RobotContainer {
     // m_operatorController.rightBumper().onTrue(new ClawToPositionCommand(m_claw, 0));
 
     // failsafe for manual control
-    manualClawTriggerUp.whileTrue(new ManualClawCommand(m_claw, -ClawConstants.manualClawSpeed));
-    manualClawTriggerDown.whileTrue(new ManualClawCommand(m_claw, ClawConstants.manualClawSpeed));
+    // manualClawTriggerUp.whileTrue(new ManualClawCommand(m_claw, -ClawConstants.manualClawSpeed));
+    // manualClawTriggerDown.whileTrue(new ManualClawCommand(m_claw, ClawConstants.manualClawSpeed));
     // MannualElevatorUp.whileTrue(new MannualElevatorCommand(m_elevator, 0.15));
     // MannualElevatorDown.whileTrue(new MannualElevatorCommand(m_elevator, -0.03));
 
@@ -389,15 +389,15 @@ public class RobotContainer {
 
 
     // BRAKE CLAW USING VOLTAGE
-    m_operatorController.povRight().toggleOnTrue(new InstantCommand(() -> m_claw.motorVoltage(ClawConstants.kSVoltage)));
-    m_operatorController.povLeft().toggleOnTrue(new InstantCommand(() -> m_claw.motorVoltage(0)));
+    // m_operatorController.povRight().toggleOnTrue(new InstantCommand(() -> m_claw.motorVoltage(ClawConstants.kSVoltage)));
+    // m_operatorController.povLeft().toggleOnTrue(new InstantCommand(() -> m_claw.motorVoltage(0)));
 
     //Algae Controls
     m_driverController.leftTrigger().whileTrue(new AlgaeIntakeCommand(m_shooter));
     m_driverController.rightTrigger().whileTrue(new CoralShootCommand(m_shooter, ShooterConstants.slowShooterSpeed));
-    m_operatorController.rightBumper().onTrue(Commands.parallel(
-      new ManualClawCommand(m_claw, -ClawConstants.bargeClawSpeed), 
-      new CoralShootCommand(m_shooter, ShooterConstants.bargeAlgaeShooterSpeed)).withTimeout(0.25));
+    // m_operatorController.rightBumper().onTrue(Commands.parallel(
+    //   new ManualClawCommand(m_claw, -ClawConstants.bargeClawSpeed), 
+    //   new CoralShootCommand(m_shooter, ShooterConstants.bargeAlgaeShooterSpeed)).withTimeout(0.25));
 
     //m_driverController.a().toggleOnTrue(new InstantCommand(() -> m_elevator.setElevatorVoltage(1.25)));
     

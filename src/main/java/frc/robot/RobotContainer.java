@@ -27,7 +27,7 @@ import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.AlgaeIntakeCommand;
 import frc.robot.commands.AutonAdjustCommand;
 import frc.robot.commands.AutonAlgaeAlignCommand;
-import frc.robot.commands.MannualElevatorCommand;
+// import frc.robot.commands.MannualElevatorCommand;
 import frc.robot.commands.ManualClawCommand;
 import frc.robot.commands.CoralShootCommand;
 import frc.robot.generated.TunerConstants;
@@ -52,7 +52,7 @@ import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.net.PortForwarder;
 import frc.robot.commands.ClawToPositionCommand;
 import frc.robot.commands.CoralIntakeCommand;
-import frc.robot.commands.ElevatorToPositionCommand;
+// import frc.robot.commands.ElevatorToPositionCommand;
 import java.util.function.BooleanSupplier;
 
 import com.playingwithfusion.TimeOfFlight;
@@ -96,7 +96,7 @@ public class RobotContainer {
       new CommandXboxController(OperatorConstants.kOperatorControllerPort);
   DoubleSupplier yOperator = () -> m_operatorController.getRightY();
 
-    private DoubleSupplier swerveSpeed = () -> m_elevator.getSwerveSpeed();
+    // private DoubleSupplier swerveSpeed = () -> m_elevator.getSwerveSpeed();
     
  /*  public BooleanSupplier isTeleop = () -> false;
   public BooleanSupplier coralPresent = this::coralPresent;
@@ -106,10 +106,10 @@ public class RobotContainer {
   Trigger runIndexerTrigger = new Trigger(this::coralPresent);
   Trigger manualClawTriggerUp = new Trigger(() -> yOperator.getAsDouble() > 0);
   Trigger manualClawTriggerDown = new Trigger(() -> yOperator.getAsDouble() < 0);
-  Trigger elevatorL1 = new Trigger(()->Math.abs(m_elevator.getPosition()-ElevatorConstants.L1Height) < ElevatorConstants.elevatorPrecision);
+  // Trigger elevatorL1 = new Trigger(()->Math.abs(m_elevator.getPosition()-ElevatorConstants.L1Height) < ElevatorConstants.elevatorPrecision);
 
 
-  private final SendableChooser<Command> autoChooser;
+  // private final SendableChooser<Command> autoChooser;
 
   public final LEDSubsystem m_LEDs = new LEDSubsystem(new LEDIOBlinken());
   public final VisionSubsystem m_Vision = new VisionSubsystem(m_LEDs);
@@ -128,90 +128,91 @@ public class RobotContainer {
       //NamedCommands.registerCommand("Align", 
       //  new AlignCommand(m_drivetrain, m_Vision, true).withTimeout(2));
 
-      NamedCommands.registerCommand("Shoot", 
-        new CoralShootCommand(m_shooter, ShooterConstants.slowShooterSpeed).withTimeout(1));
+      // NamedCommands.registerCommand("Shoot", 
+      //   new CoralShootCommand(m_shooter, ShooterConstants.slowShooterSpeed).withTimeout(1));
       
-      NamedCommands.registerCommand("Intake", 
-        new WaitUntilCommand(this::coralPresent).andThen(
-        new CoralIntakeCommand(m_shooter, m_elevator, ShooterConstants.intakeSpeed, this::coralPresent)).andThen(
-        new WaitCommand(0.3)
-        ));
+      // NamedCommands.registerCommand("Intake", 
+      //   new WaitUntilCommand(this::coralPresent).andThen(
+      //   new CoralIntakeCommand(m_shooter, m_elevator, ShooterConstants.intakeSpeed, this::coralPresent)).andThen(
+      //   new WaitCommand(0.3)
+      //   ));
 
-      NamedCommands.registerCommand("L1", 
-        new ClawToPositionCommand(m_claw, ClawConstants.intermediateClawPos).andThen(Commands.parallel(
-        new ElevatorToPositionCommand(m_elevator,ElevatorConstants.L1Height), 
-        new WaitUntilCommand(() -> (Math.abs(m_elevator.getPosition()-ElevatorConstants.L1Height) < ElevatorConstants.elevatorPrecision)).andThen(
-        new ClawToPositionCommand(m_claw, ClawConstants.L1ClawPosition)))
-        ));
-      NamedCommands.registerCommand("L2", 
-        new ClawToPositionCommand(m_claw, ClawConstants.intermediateClawPos).andThen(Commands.parallel(
-        new ElevatorToPositionCommand(m_elevator,ElevatorConstants.L2Height), 
-        new WaitUntilCommand(() -> (Math.abs(m_elevator.getPosition()-ElevatorConstants.L2Height) < ElevatorConstants.elevatorPrecision)).andThen(
-        new ClawToPositionCommand(m_claw, ClawConstants.L2ClawPosition)))
-        ));
-      NamedCommands.registerCommand("L3", 
-        new ClawToPositionCommand(m_claw, ClawConstants.intermediateClawPos).andThen(Commands.parallel(
-        new ElevatorToPositionCommand(m_elevator,ElevatorConstants.L3Height), 
-        new WaitUntilCommand(() -> (Math.abs(m_elevator.getPosition()-ElevatorConstants.L3Height) < ElevatorConstants.elevatorPrecision)).andThen(
-        new ClawToPositionCommand(m_claw, ClawConstants.L3ClawPosition)))
-        ));
-      NamedCommands.registerCommand("L4", 
-        new ClawToPositionCommand(m_claw, ClawConstants.intermediateClawPos).andThen(Commands.parallel(
-        new ElevatorToPositionCommand(m_elevator,ElevatorConstants.L4Height), 
-        new WaitUntilCommand(() -> (Math.abs(m_elevator.getPosition()-ElevatorConstants.L4Height) < ElevatorConstants.elevatorPrecision)).andThen(
-        new ClawToPositionCommand(m_claw, ClawConstants.AutonL4Claw)))
-        ));
-      NamedCommands.registerCommand("A1", 
-        new ClawToPositionCommand(m_claw, ClawConstants.intermediateClawPos).andThen(Commands.parallel(
-        new ElevatorToPositionCommand(m_elevator,ElevatorConstants.A1Height), 
-        new WaitUntilCommand(() -> (Math.abs(m_elevator.getPosition()-ElevatorConstants.A1Height) < ElevatorConstants.elevatorPrecision)).andThen(new ClawToPositionCommand(m_claw, ClawConstants.algaeClawPos)).andThen(
-        new InstantCommand(() -> m_shooter.runShooterMotor(ShooterConstants.algaeSpeed))
-        ))
-      ));
-      NamedCommands.registerCommand("A2", 
-        new ClawToPositionCommand(m_claw, ClawConstants.intermediateClawPos).andThen(Commands.parallel(
-        new ElevatorToPositionCommand(m_elevator,ElevatorConstants.A2Height), 
-        new WaitUntilCommand(() -> (Math.abs(m_elevator.getPosition()-ElevatorConstants.A2Height) < ElevatorConstants.elevatorPrecision)).andThen(new ClawToPositionCommand(m_claw, ClawConstants.algaeClawPos)).andThen(
-        new InstantCommand(() -> m_shooter.runShooterMotor(ShooterConstants.algaeSpeed))
-        ))
-      ));
-      NamedCommands.registerCommand("Processor",         
-        new ClawToPositionCommand(m_claw, ClawConstants.processorClawPos).andThen(Commands.parallel(
-        new ElevatorToPositionCommand(m_elevator,ElevatorConstants.processorHeight), 
-        new WaitUntilCommand(() -> (Math.abs(m_elevator.getPosition()-ElevatorConstants.processorHeight) < ElevatorConstants.elevatorPrecision)).andThen(
-        new ClawToPositionCommand(m_claw, ClawConstants.processorClawPos)).andThen(
-        new InstantCommand(() -> m_shooter.runShooterMotor(ShooterConstants.algaeSpeed))
-        ))
-      ));
+      // NamedCommands.registerCommand("L1", 
+      //   new ClawToPositionCommand(m_claw, ClawConstants.intermediateClawPos).andThen(Commands.parallel(
+      //   new ElevatorToPositionCommand(m_elevator,ElevatorConstants.L1Height), 
+      //   new WaitUntilCommand(() -> (Math.abs(m_elevator.getPosition()-ElevatorConstants.L1Height) < ElevatorConstants.elevatorPrecision)).andThen(
+      //   new ClawToPositionCommand(m_claw, ClawConstants.L1ClawPosition)))
+      //   ));
+      // NamedCommands.registerCommand("L2", 
+      //   new ClawToPositionCommand(m_claw, ClawConstants.intermediateClawPos).andThen(Commands.parallel(
+      //   new ElevatorToPositionCommand(m_elevator,ElevatorConstants.L2Height), 
+      //   new WaitUntilCommand(() -> (Math.abs(m_elevator.getPosition()-ElevatorConstants.L2Height) < ElevatorConstants.elevatorPrecision)).andThen(
+      //   new ClawToPositionCommand(m_claw, ClawConstants.L2ClawPosition)))
+      //   ));
+      // NamedCommands.registerCommand("L3", 
+      //   new ClawToPositionCommand(m_claw, ClawConstants.intermediateClawPos).andThen(Commands.parallel(
+      //   new ElevatorToPositionCommand(m_elevator,ElevatorConstants.L3Height), 
+      //   new WaitUntilCommand(() -> (Math.abs(m_elevator.getPosition()-ElevatorConstants.L3Height) < ElevatorConstants.elevatorPrecision)).andThen(
+      //   new ClawToPositionCommand(m_claw, ClawConstants.L3ClawPosition)))
+      //   ));
+      // NamedCommands.registerCommand("L4", 
+      //   new ClawToPositionCommand(m_claw, ClawConstants.intermediateClawPos).andThen(Commands.parallel(
+      //   new ElevatorToPositionCommand(m_elevator,ElevatorConstants.L4Height), 
+      //   new WaitUntilCommand(() -> (Math.abs(m_elevator.getPosition()-ElevatorConstants.L4Height) < ElevatorConstants.elevatorPrecision)).andThen(
+      //   new ClawToPositionCommand(m_claw, ClawConstants.AutonL4Claw)))
+      //   ));
+      // NamedCommands.registerCommand("A1", 
+      //   new ClawToPositionCommand(m_claw, ClawConstants.intermediateClawPos).andThen(Commands.parallel(
+      //   new ElevatorToPositionCommand(m_elevator,ElevatorConstants.A1Height), 
+      //   new WaitUntilCommand(() -> (Math.abs(m_elevator.getPosition()-ElevatorConstants.A1Height) < ElevatorConstants.elevatorPrecision)).andThen(new ClawToPositionCommand(m_claw, ClawConstants.algaeClawPos)).andThen(
+      //   new InstantCommand(() -> m_shooter.runShooterMotor(ShooterConstants.algaeSpeed))
+      //   ))
+      // ));
+      // NamedCommands.registerCommand("A2", 
+      //   new ClawToPositionCommand(m_claw, ClawConstants.intermediateClawPos).andThen(Commands.parallel(
+      //   new ElevatorToPositionCommand(m_elevator,ElevatorConstants.A2Height), 
+      //   new WaitUntilCommand(() -> (Math.abs(m_elevator.getPosition()-ElevatorConstants.A2Height) < ElevatorConstants.elevatorPrecision)).andThen(new ClawToPositionCommand(m_claw, ClawConstants.algaeClawPos)).andThen(
+      //   new InstantCommand(() -> m_shooter.runShooterMotor(ShooterConstants.algaeSpeed))
+      //   ))
+      // ));
+      // NamedCommands.registerCommand("Processor",         
+      //   new ClawToPositionCommand(m_claw, ClawConstants.processorClawPos).andThen(Commands.parallel(
+      //   new ElevatorToPositionCommand(m_elevator,ElevatorConstants.processorHeight), 
+      //   new WaitUntilCommand(() -> (Math.abs(m_elevator.getPosition()-ElevatorConstants.processorHeight) < ElevatorConstants.elevatorPrecision)).andThen(
+      //   new ClawToPositionCommand(m_claw, ClawConstants.processorClawPos)).andThen(
+      //   new InstantCommand(() -> m_shooter.runShooterMotor(ShooterConstants.algaeSpeed))
+      //   ))
+      // ));
 
-      NamedCommands.registerCommand("BargePos", 
-        new ClawToPositionCommand(m_claw, ClawConstants.algaeClawPos).andThen(Commands.parallel(
-        new ElevatorToPositionCommand(m_elevator,ElevatorConstants.bargeHeight), 
-        new WaitUntilCommand(() -> (Math.abs(m_elevator.getPosition()-ElevatorConstants.bargeHeight) < ElevatorConstants.elevatorPrecision)).andThen(
-        new ClawToPositionCommand(m_claw, ClawConstants.bargeClawPos)).andThen(
-        ))
-      ));
+      // NamedCommands.registerCommand("BargePos", 
+      //   new ClawToPositionCommand(m_claw, ClawConstants.algaeClawPos).andThen(Commands.parallel(
+      //   new ElevatorToPositionCommand(m_elevator,ElevatorConstants.bargeHeight), 
+      //   new WaitUntilCommand(() -> (Math.abs(m_elevator.getPosition()-ElevatorConstants.bargeHeight) < ElevatorConstants.elevatorPrecision)).andThen(
+      //   new ClawToPositionCommand(m_claw, ClawConstants.bargeClawPos)).andThen(
+      //   ))
+      // ));
 
-      NamedCommands.registerCommand("BargeShot", Commands.parallel(
-        new CoralShootCommand(m_shooter, ShooterConstants.bargeAlgaeShooterSpeed), 
-        new ManualClawCommand(m_claw, -ClawConstants.bargeClawSpeed)).withTimeout(0.25));
+      // NamedCommands.registerCommand("BargeShot", Commands.parallel(
+      //   new CoralShootCommand(m_shooter, ShooterConstants.bargeAlgaeShooterSpeed), 
+      //   new ManualClawCommand(m_claw, -ClawConstants.bargeClawSpeed)).withTimeout(0.25));
 
-      NamedCommands.registerCommand("ElevatorDown", 
-        new MannualElevatorCommand(m_elevator, -0.03).withTimeout(1));
+      // NamedCommands.registerCommand("ElevatorDown", 
+      //   new MannualElevatorCommand(m_elevator, -0.03).withTimeout(1));
 
-      NamedCommands.registerCommand("Align", new AutonAdjustCommand(m_Vision, m_drivetrain, true));
-      NamedCommands.registerCommand("Algae Align", new AutonAlgaeAlignCommand(m_Vision, m_drivetrain));
+      // NamedCommands.registerCommand("Align", new AutonAdjustCommand(m_Vision, m_drivetrain, true));
+      // NamedCommands.registerCommand("Algae Align", new AutonAlgaeAlignCommand(m_Vision, m_drivetrain));
 
 
-       m_rangeSensor.setRangingMode(RangingMode.Short, 24);
-       autoChooser = AutoBuilder.buildAutoChooser("Tests");
-       SmartDashboard.putData("Auto Mode", autoChooser);
+      //  m_rangeSensor.setRangingMode(RangingMode.Short, 24);
+      //  autoChooser = AutoBuilder.buildAutoChooser("Tests");
+      //  SmartDashboard.putData("Auto Mode", autoChooser);
  
        configureBindings();
    }
    public Command getAutonomousCommand() {
      // An example command will be run in autonomous
-     return autoChooser.getSelected();
+    //  return autoChooser.getSelected();
+    return new InstantCommand();
    }
 
   private void configureBindings() {
@@ -219,13 +220,13 @@ public class RobotContainer {
     //new Trigger(m_exampleSubsystem::exampleCondition)
     //.onTrue(new ExampleCommand(m_exampleSubsystem));
     m_drivetrain.registerTelemetry(new Telemetry(MaxSpeed)::telemeterize); // experiment with this telemetry TODO
-    m_drivetrain.setDefaultCommand(
-        // Drivetrain will execute this command periodically
-        m_drivetrain.applyRequest(() ->
-            drive.withVelocityX(-m_driverController.getLeftY() * swerveSpeed.getAsDouble()) // Drive forward with negative Y (forward)
-                 .withVelocityY(-m_driverController.getLeftX() *  swerveSpeed.getAsDouble()) // Drive left with negative X (left)
-                 .withRotationalRate(-m_driverController.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
-        ));
+    // m_drivetrain.setDefaultCommand(
+    //     // Drivetrain will execute this command periodically
+    //     m_drivetrain.applyRequest(() ->
+    //         drive.withVelocityX(-m_driverController.getLeftY() * swerveSpeed.getAsDouble()) // Drive forward with negative Y (forward)
+    //              .withVelocityY(-m_driverController.getLeftX() *  swerveSpeed.getAsDouble()) // Drive left with negative X (left)
+    //              .withRotationalRate(-m_driverController.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
+    //     ));
 
     // m_driverController.a().whileTrue(m_drivetrain.applyRequest(() -> brake));
     //m_driverController.b().whileTrue(m_drivetrain.applyRequest(() ->
@@ -283,90 +284,90 @@ public class RobotContainer {
     // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
     // cancelling on release.
 
-    DoubleSupplier leftY = () -> m_operatorController.getLeftY();
-    DoubleSupplier elevatorPosition = () -> m_elevator.getPosition();
+    // DoubleSupplier leftY = () -> m_operatorController.getLeftY();
+    // DoubleSupplier elevatorPosition = () -> m_elevator.getPosition();
 
-    BooleanSupplier elevatorAtL1 = () -> (Math.abs(m_elevator.getPosition()-ElevatorConstants.L1Height) < ElevatorConstants.elevatorPrecision);
-    BooleanSupplier elevatorAtL2 = () -> (Math.abs(m_elevator.getPosition()-ElevatorConstants.L2Height) < ElevatorConstants.elevatorPrecision);
-    BooleanSupplier elevatorAtL3 = () -> (Math.abs(m_elevator.getPosition()-ElevatorConstants.L3Height) < ElevatorConstants.elevatorPrecision);
-    BooleanSupplier elevatorAtL4 = () -> (Math.abs(m_elevator.getPosition()-ElevatorConstants.L4Height) < ElevatorConstants.elevatorPrecision);
+    // BooleanSupplier elevatorAtL1 = () -> (Math.abs(m_elevator.getPosition()-ElevatorConstants.L1Height) < ElevatorConstants.elevatorPrecision);
+    // BooleanSupplier elevatorAtL2 = () -> (Math.abs(m_elevator.getPosition()-ElevatorConstants.L2Height) < ElevatorConstants.elevatorPrecision);
+    // BooleanSupplier elevatorAtL3 = () -> (Math.abs(m_elevator.getPosition()-ElevatorConstants.L3Height) < ElevatorConstants.elevatorPrecision);
+    // BooleanSupplier elevatorAtL4 = () -> (Math.abs(m_elevator.getPosition()-ElevatorConstants.L4Height) < ElevatorConstants.elevatorPrecision);
 
-    BooleanSupplier elevatorAtA1 = () -> (Math.abs(m_elevator.getPosition()-ElevatorConstants.A1Height) < ElevatorConstants.elevatorPrecision);
-    BooleanSupplier elevatorAtA2 = () -> (Math.abs(m_elevator.getPosition()-ElevatorConstants.A2Height) < ElevatorConstants.elevatorPrecision);
+    // BooleanSupplier elevatorAtA1 = () -> (Math.abs(m_elevator.getPosition()-ElevatorConstants.A1Height) < ElevatorConstants.elevatorPrecision);
+    // BooleanSupplier elevatorAtA2 = () -> (Math.abs(m_elevator.getPosition()-ElevatorConstants.A2Height) < ElevatorConstants.elevatorPrecision);
 
-    BooleanSupplier elevatorAtProcessor = () -> (Math.abs(m_elevator.getPosition()-ElevatorConstants.processorHeight) < ElevatorConstants.elevatorPrecision);
-    BooleanSupplier elevatorAtBarge = () -> (Math.abs(m_elevator.getPosition()-ElevatorConstants.bargeHeight) < ElevatorConstants.elevatorPrecision);
+    // BooleanSupplier elevatorAtProcessor = () -> (Math.abs(m_elevator.getPosition()-ElevatorConstants.processorHeight) < ElevatorConstants.elevatorPrecision);
+    // BooleanSupplier elevatorAtBarge = () -> (Math.abs(m_elevator.getPosition()-ElevatorConstants.bargeHeight) < ElevatorConstants.elevatorPrecision);
 
-    Trigger MannualElevatorUp = new Trigger(() -> leftY.getAsDouble() < -0.8);
-    Trigger MannualElevatorDown = new Trigger(() -> leftY.getAsDouble() > 0.8);
+    // Trigger MannualElevatorUp = new Trigger(() -> leftY.getAsDouble() < -0.8);
+    // Trigger MannualElevatorDown = new Trigger(() -> leftY.getAsDouble() > 0.8);
 
-    // CLAW AND ELEVATOR POSITION CONTROLS
-    m_operatorController.a().onTrue(new ConditionalCommand(new ClawToPositionCommand(m_claw, ClawConstants.L1ClawPosition), 
-      new ClawToPositionCommand(m_claw, ClawConstants.intermediateClawPos).andThen(Commands.parallel(
-      new ElevatorToPositionCommand(m_elevator,ElevatorConstants.L1Height), 
-      new WaitUntilCommand(() -> (Math.abs(m_elevator.getPosition()-ElevatorConstants.L1Height) < ElevatorConstants.elevatorPrecision)).andThen(
-      new ClawToPositionCommand(m_claw, ClawConstants.L1ClawPosition)))
-      ), elevatorAtL1));
+    // // CLAW AND ELEVATOR POSITION CONTROLS
+    // m_operatorController.a().onTrue(new ConditionalCommand(new ClawToPositionCommand(m_claw, ClawConstants.L1ClawPosition), 
+    //   new ClawToPositionCommand(m_claw, ClawConstants.intermediateClawPos).andThen(Commands.parallel(
+    //   new ElevatorToPositionCommand(m_elevator,ElevatorConstants.L1Height), 
+    //   new WaitUntilCommand(() -> (Math.abs(m_elevator.getPosition()-ElevatorConstants.L1Height) < ElevatorConstants.elevatorPrecision)).andThen(
+    //   new ClawToPositionCommand(m_claw, ClawConstants.L1ClawPosition)))
+    //   ), elevatorAtL1));
 
-    m_operatorController.b().onTrue(new ConditionalCommand(new ClawToPositionCommand(m_claw, ClawConstants.L2ClawPosition),
-      new ClawToPositionCommand(m_claw, ClawConstants.intermediateClawPos).andThen(Commands.parallel(
-      new ElevatorToPositionCommand(m_elevator,ElevatorConstants.L2Height), 
-      new WaitUntilCommand(() -> (Math.abs(m_elevator.getPosition()-ElevatorConstants.L2Height) < ElevatorConstants.elevatorPrecision)).andThen(
-      new ClawToPositionCommand(m_claw, ClawConstants.L2ClawPosition)))
-      ), elevatorAtL2));
+    // m_operatorController.b().onTrue(new ConditionalCommand(new ClawToPositionCommand(m_claw, ClawConstants.L2ClawPosition),
+    //   new ClawToPositionCommand(m_claw, ClawConstants.intermediateClawPos).andThen(Commands.parallel(
+    //   new ElevatorToPositionCommand(m_elevator,ElevatorConstants.L2Height), 
+    //   new WaitUntilCommand(() -> (Math.abs(m_elevator.getPosition()-ElevatorConstants.L2Height) < ElevatorConstants.elevatorPrecision)).andThen(
+    //   new ClawToPositionCommand(m_claw, ClawConstants.L2ClawPosition)))
+    //   ), elevatorAtL2));
 
-    m_operatorController.b().onTrue(new ConditionalCommand(new ClawToPositionCommand(m_claw, ClawConstants.L2ClawPosition),
-      new ClawToPositionCommand(m_claw, ClawConstants.intermediateClawPos).andThen(Commands.parallel(
-      new ElevatorToPositionCommand(m_elevator,ElevatorConstants.L2Height), 
-      new WaitUntilCommand(() -> (Math.abs(m_elevator.getPosition()-ElevatorConstants.L2Height) < ElevatorConstants.elevatorPrecision)).andThen(
-      new ClawToPositionCommand(m_claw, ClawConstants.L2ClawPosition)))
-    ), elevatorAtL2));
+    // m_operatorController.b().onTrue(new ConditionalCommand(new ClawToPositionCommand(m_claw, ClawConstants.L2ClawPosition),
+    //   new ClawToPositionCommand(m_claw, ClawConstants.intermediateClawPos).andThen(Commands.parallel(
+    //   new ElevatorToPositionCommand(m_elevator,ElevatorConstants.L2Height), 
+    //   new WaitUntilCommand(() -> (Math.abs(m_elevator.getPosition()-ElevatorConstants.L2Height) < ElevatorConstants.elevatorPrecision)).andThen(
+    //   new ClawToPositionCommand(m_claw, ClawConstants.L2ClawPosition)))
+    // ), elevatorAtL2));
     
-    m_operatorController.x().onTrue(new ConditionalCommand(new ClawToPositionCommand(m_claw, ClawConstants.L3ClawPosition),
-      new ClawToPositionCommand(m_claw, ClawConstants.intermediateClawPos).andThen(Commands.parallel(
-      new ElevatorToPositionCommand(m_elevator,ElevatorConstants.L3Height), 
-      new WaitUntilCommand(() -> (Math.abs(m_elevator.getPosition()-ElevatorConstants.L3Height) < ElevatorConstants.elevatorPrecision)).andThen(
-      new ClawToPositionCommand(m_claw, ClawConstants.L3ClawPosition)))
-      ), elevatorAtL3));
+    // m_operatorController.x().onTrue(new ConditionalCommand(new ClawToPositionCommand(m_claw, ClawConstants.L3ClawPosition),
+    //   new ClawToPositionCommand(m_claw, ClawConstants.intermediateClawPos).andThen(Commands.parallel(
+    //   new ElevatorToPositionCommand(m_elevator,ElevatorConstants.L3Height), 
+    //   new WaitUntilCommand(() -> (Math.abs(m_elevator.getPosition()-ElevatorConstants.L3Height) < ElevatorConstants.elevatorPrecision)).andThen(
+    //   new ClawToPositionCommand(m_claw, ClawConstants.L3ClawPosition)))
+    //   ), elevatorAtL3));
     
-    m_operatorController.y().onTrue(new ConditionalCommand(new ClawToPositionCommand(m_claw, ClawConstants.L4ClawPosition),
-      new ClawToPositionCommand(m_claw, ClawConstants.intermediateClawPos).andThen(Commands.parallel(
-      new ElevatorToPositionCommand(m_elevator,ElevatorConstants.L4Height), 
-      new WaitUntilCommand(() -> (Math.abs(m_elevator.getPosition()-ElevatorConstants.L4Height) < ElevatorConstants.elevatorPrecision)).andThen(
-      new ClawToPositionCommand(m_claw, ClawConstants.L4ClawPosition)))
-      ), elevatorAtL4));
+    // m_operatorController.y().onTrue(new ConditionalCommand(new ClawToPositionCommand(m_claw, ClawConstants.L4ClawPosition),
+    //   new ClawToPositionCommand(m_claw, ClawConstants.intermediateClawPos).andThen(Commands.parallel(
+    //   new ElevatorToPositionCommand(m_elevator,ElevatorConstants.L4Height), 
+    //   new WaitUntilCommand(() -> (Math.abs(m_elevator.getPosition()-ElevatorConstants.L4Height) < ElevatorConstants.elevatorPrecision)).andThen(
+    //   new ClawToPositionCommand(m_claw, ClawConstants.L4ClawPosition)))
+    //   ), elevatorAtL4));
 
-    m_operatorController.povUp().onTrue(
-      new ConditionalCommand(new ClawToPositionCommand(m_claw, ClawConstants.algaeClawPos), 
-      new ClawToPositionCommand(m_claw, ClawConstants.intermediateClawPos).andThen(Commands.parallel(
-      new ElevatorToPositionCommand(m_elevator,ElevatorConstants.A2Height), 
-      new WaitUntilCommand(() -> (Math.abs(m_elevator.getPosition()-ElevatorConstants.A2Height) < ElevatorConstants.elevatorPrecision))).andThen(
-      new ClawToPositionCommand(m_claw, ClawConstants.algaeClawPos)
-      )), elevatorAtA2));
+    // m_operatorController.povUp().onTrue(
+    //   new ConditionalCommand(new ClawToPositionCommand(m_claw, ClawConstants.algaeClawPos), 
+    //   new ClawToPositionCommand(m_claw, ClawConstants.intermediateClawPos).andThen(Commands.parallel(
+    //   new ElevatorToPositionCommand(m_elevator,ElevatorConstants.A2Height), 
+    //   new WaitUntilCommand(() -> (Math.abs(m_elevator.getPosition()-ElevatorConstants.A2Height) < ElevatorConstants.elevatorPrecision))).andThen(
+    //   new ClawToPositionCommand(m_claw, ClawConstants.algaeClawPos)
+    //   )), elevatorAtA2));
 
-    m_operatorController.povDown().onTrue(
-      new ConditionalCommand(new ClawToPositionCommand(m_claw, ClawConstants.algaeClawPos), 
-      new ClawToPositionCommand(m_claw, ClawConstants.intermediateClawPos).andThen(Commands.parallel(
-      new ElevatorToPositionCommand(m_elevator,ElevatorConstants.A1Height), 
-      new WaitUntilCommand(() -> (Math.abs(m_elevator.getPosition()-ElevatorConstants.A1Height) < ElevatorConstants.elevatorPrecision)).andThen(
-      new ClawToPositionCommand(m_claw, ClawConstants.algaeClawPos))
-      )), elevatorAtA1));
+    // m_operatorController.povDown().onTrue(
+    //   new ConditionalCommand(new ClawToPositionCommand(m_claw, ClawConstants.algaeClawPos), 
+    //   new ClawToPositionCommand(m_claw, ClawConstants.intermediateClawPos).andThen(Commands.parallel(
+    //   new ElevatorToPositionCommand(m_elevator,ElevatorConstants.A1Height), 
+    //   new WaitUntilCommand(() -> (Math.abs(m_elevator.getPosition()-ElevatorConstants.A1Height) < ElevatorConstants.elevatorPrecision)).andThen(
+    //   new ClawToPositionCommand(m_claw, ClawConstants.algaeClawPos))
+    //   )), elevatorAtA1));
 
-    m_driverController.leftBumper().onTrue(      
-      new ConditionalCommand(new ClawToPositionCommand(m_claw, ClawConstants.processorClawPos), 
-      new ClawToPositionCommand(m_claw, ClawConstants.processorClawPos).andThen(Commands.parallel(
-      new ElevatorToPositionCommand(m_elevator,ElevatorConstants.processorHeight), 
-      new WaitUntilCommand(() -> (Math.abs(m_elevator.getPosition()-ElevatorConstants.processorHeight) < ElevatorConstants.elevatorPrecision)).andThen(
-      new ClawToPositionCommand(m_claw, ClawConstants.processorClawPos))
-      )), elevatorAtProcessor));
+    // m_driverController.leftBumper().onTrue(      
+    //   new ConditionalCommand(new ClawToPositionCommand(m_claw, ClawConstants.processorClawPos), 
+    //   new ClawToPositionCommand(m_claw, ClawConstants.processorClawPos).andThen(Commands.parallel(
+    //   new ElevatorToPositionCommand(m_elevator,ElevatorConstants.processorHeight), 
+    //   new WaitUntilCommand(() -> (Math.abs(m_elevator.getPosition()-ElevatorConstants.processorHeight) < ElevatorConstants.elevatorPrecision)).andThen(
+    //   new ClawToPositionCommand(m_claw, ClawConstants.processorClawPos))
+    //   )), elevatorAtProcessor));
 
-    m_operatorController.leftBumper().onTrue(      
-      new ConditionalCommand(new ClawToPositionCommand(m_claw, ClawConstants.algaeClawPos), 
-      new ClawToPositionCommand(m_claw, ClawConstants.algaeClawPos).andThen(Commands.parallel(
-      new ElevatorToPositionCommand(m_elevator,ElevatorConstants.bargeHeight), 
-      new WaitUntilCommand(() -> (Math.abs(m_elevator.getPosition()-ElevatorConstants.bargeHeight) < ElevatorConstants.elevatorPrecision)).andThen(
-      new ClawToPositionCommand(m_claw, ClawConstants.bargeClawPos))
-      )), elevatorAtBarge));
+    // m_operatorController.leftBumper().onTrue(      
+    //   new ConditionalCommand(new ClawToPositionCommand(m_claw, ClawConstants.algaeClawPos), 
+    //   new ClawToPositionCommand(m_claw, ClawConstants.algaeClawPos).andThen(Commands.parallel(
+    //   new ElevatorToPositionCommand(m_elevator,ElevatorConstants.bargeHeight), 
+    //   new WaitUntilCommand(() -> (Math.abs(m_elevator.getPosition()-ElevatorConstants.bargeHeight) < ElevatorConstants.elevatorPrecision)).andThen(
+    //   new ClawToPositionCommand(m_claw, ClawConstants.bargeClawPos))
+    //   )), elevatorAtBarge));
   
     
 
@@ -377,8 +378,8 @@ public class RobotContainer {
     // failsafe for manual control
     manualClawTriggerUp.whileTrue(new ManualClawCommand(m_claw, -ClawConstants.manualClawSpeed));
     manualClawTriggerDown.whileTrue(new ManualClawCommand(m_claw, ClawConstants.manualClawSpeed));
-    MannualElevatorUp.whileTrue(new MannualElevatorCommand(m_elevator, 0.15));
-    MannualElevatorDown.whileTrue(new MannualElevatorCommand(m_elevator, -0.03));
+    // MannualElevatorUp.whileTrue(new MannualElevatorCommand(m_elevator, 0.15));
+    // MannualElevatorDown.whileTrue(new MannualElevatorCommand(m_elevator, -0.03));
 
     // SHOOTER AND INTAKE CONTROLS
     m_operatorController.leftTrigger().whileTrue(new CoralShootCommand(m_shooter, -ShooterConstants.slowShooterSpeed));
@@ -416,7 +417,7 @@ public class RobotContainer {
    // m_driverController.a().whileTrue(new CoralShootCommand(m_shooter, ShooterConstants.slowShooterSpeed));
    // m_driverController.y().whileTrue(new CoralShootCommand(m_shooter, -ShooterConstants.slowShooterSpeed));
 
-   m_driverController.a().and(m_driverController.y()).onTrue(new InstantCommand(() -> m_elevator.fastModeBool=!m_elevator.fastModeBool));
+  //  m_driverController.a().and(m_driverController.y()).onTrue(new InstantCommand(() -> m_elevator.fastModeBool=!m_elevator.fastModeBool));
    //m_driverController.a().whileTrue(new AutonAlgaeAlignCommand(m_Vision, m_drivetrain));
 
 

@@ -19,6 +19,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     MOVE_TO_A1,
     MOVE_TO_A2,
     MOVE_TO_PROCESSOR,
+    MOVE_TO_BARGE,
     MANUAL_CONTROL
   }
 
@@ -30,7 +31,8 @@ public class ElevatorSubsystem extends SubsystemBase {
       WantedElevatorState.MOVE_TO_L4, ElevatorConstants.L4Height,
       WantedElevatorState.MOVE_TO_A1, ElevatorConstants.A1Height,
       WantedElevatorState.MOVE_TO_A2, ElevatorConstants.A2Height,
-      WantedElevatorState.MOVE_TO_PROCESSOR, ElevatorConstants.processorHeight);
+      WantedElevatorState.MOVE_TO_PROCESSOR, ElevatorConstants.processorHeight,
+      WantedElevatorState.MOVE_TO_BARGE, ElevatorConstants.bargeHeight);
 
   private enum ElevatorSystemState {
     IDLING,
@@ -48,7 +50,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   private double manualSpeed = 0.0;
 
   private final Timer settleTimer = new Timer();
-
+  
   private final PIDController m_ElevatorPID = new PIDController(
       ElevatorConstants.kP, ElevatorConstants.kI, ElevatorConstants.kD);
 
@@ -63,8 +65,10 @@ public class ElevatorSubsystem extends SubsystemBase {
   public void setWantedState(WantedElevatorState state, double parameter) {
     this.wantedState = state;
     if (state == WantedElevatorState.MANUAL_CONTROL) {
-      this.manualSpeed = MathUtil.clamp(parameter, -1.0, 1.0);
+      this.manualSpeed = MathUtil.clamp(parameter, -1.0, 1.0); //speed
+      this.targetPosition = inputs.position; // keep current pos as target
     } else {
+      this.manualSpeed = 0.0; // reset when not in manual
       this.targetPosition = stateToPosMap.getOrDefault(state, 0.0);
     }
   }

@@ -21,9 +21,6 @@ import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.ExampleSubsystem;
 
-import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.commands.PathPlannerAuto;
-
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.networktables.DoubleSubscriber;
@@ -64,24 +61,15 @@ public class RobotContainer {
    
       public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
-      private SendableChooser<Command> autoChooser;
 
    public RobotContainer() {
 
-       autoChooser = AutoBuilder.buildAutoChooser("Tests");
-       SmartDashboard.putData("Auto Mode", autoChooser);
-       
-      autoChooser = AutoBuilder.buildAutoChooser("Tests");
-      SmartDashboard.putData("Auto Mode", autoChooser);
 
        configureBindings();
 
        
    }
-   public Command getAutonomousCommand() {
-     // An example command will be run in autonomous
-     return autoChooser.getSelected();
-   }
+
 
    private void configureBindings() {
         // Note that X is defined as forward according to WPILib convention,
@@ -95,24 +83,11 @@ public class RobotContainer {
             )
         );
 
-        joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
-        joystick.b().whileTrue(drivetrain.applyRequest(() ->
-            point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))
-        ));
-
-        // Run SysId routines when holding back/start and X/Y.
-        // Note that each routine should be run exactly once in a single log.
-        joystick.back().and(joystick.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
-        joystick.back().and(joystick.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
-        joystick.start().and(joystick.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
-        joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
-
         joystick.y().toggleOnTrue(new playMusicCommand());
 
         // reset the field-centric heading on left bumper press
         joystick.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
-        drivetrain.registerTelemetry(logger::telemeterize);
     }
 
 

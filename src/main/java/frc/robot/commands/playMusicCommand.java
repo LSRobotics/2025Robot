@@ -18,12 +18,16 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * 4. Copy the generated CHRP file to src/main/deploy/music, naming with camel case or snake case to ensure proper formatting
  */
 public class playMusicCommand extends Command {
-  @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
 
   private final Orchestra m_Orchestra;
   private SendableChooser<String> songChooser;
   private String[] songPaths;
   private String[] songNames;
+
+  private static final int[] MOTOR_CAN_IDS = {
+    2, 3, 4, 5, 6, 7, 8, 9, // swerve
+    31                      //Claw
+  };
 
   // Helper to format song titles
   private static String formatSongTitle(String filename) {
@@ -67,13 +71,10 @@ public class playMusicCommand extends Command {
   public playMusicCommand() {
     m_Orchestra = new Orchestra();
 
-    for (int i = 2; i < 10; i++) { //Swerve
-      m_Orchestra.addInstrument(new TalonFX(i, "rio"));
+    for (int canId : MOTOR_CAN_IDS) {
+      m_Orchestra.addInstrument(new TalonFX(canId, "rio"));
     }
 
-    m_Orchestra.addInstrument(new TalonFX(31, "rio")); //Claw
-
-    
     songChooser = new SendableChooser<>();
     
     for (int i = 0; i < songPaths.length; i++) {
@@ -101,6 +102,8 @@ public class playMusicCommand extends Command {
 
   @Override
   public void execute() {
+    SmartDashboard.putString("Current Song", songChooser.getSelected());
+    SmartDashboard.putBoolean("Is Playing", m_Orchestra.isPlaying());
   }
 
   @Override

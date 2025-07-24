@@ -97,6 +97,8 @@ public class playMusicCommand extends Command {
       System.out.println(status.toString());
     }
 
+    SmartDashboard.putString("Song load status",status.toString());
+
     m_Orchestra.play();
   }
 

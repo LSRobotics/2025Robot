@@ -88,11 +88,13 @@ public class playMusicCommand extends Command {
     SmartDashboard.putData("Song Selector", songChooser);
   }
 
-  @Override
-  public void initialize() {
-    String selectedSong = songChooser.getSelected();
+  
 
-    StatusCode status = m_Orchestra.loadMusic(selectedSong);
+  @Override
+  public void initialize() { 
+    String selectedSong = songChooser.getSelected(); 
+
+    StatusCode status = m_Orchestra.loadMusic(selectedSong); 
     if (status.isError()) {
       System.out.println(status.toString());
     }

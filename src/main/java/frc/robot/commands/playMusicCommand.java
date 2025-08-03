@@ -10,6 +10,10 @@ import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.Filesystem;
+
+import java.io.File;
+
 /*
  * To add song:
  * 1. Get song MIDI
@@ -37,7 +41,6 @@ public class playMusicCommand extends Command {
       name = name.substring(0, dot);
     }
     name = name.replace('_', ' ');
-
     name = name.replaceAll("([a-z])([A-Z])", "$1 $2");
 
     String[] words = name.split(" ");
@@ -51,17 +54,33 @@ public class playMusicCommand extends Command {
 
   {
     try {
-      java.nio.file.Path musicDir = java.nio.file.Paths.get("src/main/deploy/music");
-      songPaths = java.nio.file.Files.list(musicDir)
-          .filter(java.nio.file.Files::isRegularFile)
-          .map(path -> musicDir.relativize(path).toString().replace("\\", "/"))
-          .toArray(String[]::new);
-
-      songNames = java.nio.file.Files.list(musicDir)
-          .filter(java.nio.file.Files::isRegularFile)
-          .map(path -> formatSongTitle(path.getFileName().toString()))
-          .toArray(String[]::new);
-    } catch (java.io.IOException e) {
+      // Use the correct deploy directory path for runtime
+      File musicDir = new File(Filesystem.getDeployDirectory(), "music");
+      
+      if (musicDir.exists() && musicDir.isDirectory()) {
+        File[] files = musicDir.listFiles((dir, name) -> name.toLowerCase().endsWith(".chrp"));
+        
+        if (files != null && files.length > 0) {
+          songPaths = new String[files.length];
+          songNames = new String[files.length];
+          
+          for (int i = 0; i < files.length; i++) {
+            // Format paths as "music/filename.chrp"
+            songPaths[i] = "music/" + files[i].getName();
+            songNames[i] = formatSongTitle(files[i].getName());
+          }
+        } else {
+          System.err.println("No .chrp files found in music directory");
+          songPaths = new String[0];
+          songNames = new String[0];
+        }
+      } else {
+        System.err.println("Music directory not found: " + musicDir.getAbsolutePath());
+        songPaths = new String[0];
+        songNames = new String[0];
+      }
+    } catch (Exception e) {
+      System.err.println("Error loading music files: " + e.getMessage());
       e.printStackTrace();
       songPaths = new String[0];
       songNames = new String[0];
@@ -77,31 +96,39 @@ public class playMusicCommand extends Command {
 
     songChooser = new SendableChooser<>();
     
-    for (int i = 0; i < songPaths.length; i++) {
-      if (i == 0) {
-        songChooser.setDefaultOption(songNames[i], songPaths[i]);
-      } else {
-        songChooser.addOption(songNames[i], songPaths[i]);
+    if (songPaths.length > 0) {
+      for (int i = 0; i < songPaths.length; i++) {
+        if (i == 0) {
+          songChooser.setDefaultOption(songNames[i], songPaths[i]);
+        } else {
+          songChooser.addOption(songNames[i], songPaths[i]);
+        }
       }
+    } else {
+      // Add a placeholder if no songs are found
+      songChooser.setDefaultOption("No songs found", "");
+      SmartDashboard.putString("Song Error", "No music files found. Add .chrp files to deploy/music directory.");
     }
 
     SmartDashboard.putData("Song Selector", songChooser);
   }
 
-  
-
   @Override
   public void initialize() { 
     String selectedSong = songChooser.getSelected(); 
-
-    StatusCode status = m_Orchestra.loadMusic(selectedSong); 
-    if (status.isError()) {
-      System.out.println(status.toString());
+    
+    if (selectedSong != null && !selectedSong.isEmpty()) {
+      StatusCode status = m_Orchestra.loadMusic(selectedSong); 
+      if (status.isError()) {
+        System.out.println("Error loading song: " + status.toString());
+        SmartDashboard.putString("Song load status", "Error: " + status.toString());
+      } else {
+        SmartDashboard.putString("Song load status", "Loaded: " + selectedSong);
+        m_Orchestra.play();
+      }
+    } else {
+      SmartDashboard.putString("Song load status", "No song selected");
     }
-
-    SmartDashboard.putString("Song load status",status.toString());
-
-    m_Orchestra.play();
   }
 
   @Override

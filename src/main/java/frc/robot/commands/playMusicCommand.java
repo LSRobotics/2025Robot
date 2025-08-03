@@ -30,7 +30,7 @@ public class playMusicCommand extends Command {
 
   private static final int[] MOTOR_CAN_IDS = {
     2, 3, 4, 5, 6, 7, 8, 9, // swerve
-    31                      //Claw
+    31                      // Claw
   };
 
   // Helper to format song titles

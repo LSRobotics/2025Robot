@@ -54,7 +54,6 @@ public class playMusicCommand extends Command {
 
   {
     try {
-      // Use the correct deploy directory path for runtime
       File musicDir = new File(Filesystem.getDeployDirectory(), "music");
       
       if (musicDir.exists() && musicDir.isDirectory()) {
@@ -105,7 +104,6 @@ public class playMusicCommand extends Command {
         }
       }
     } else {
-      // Add a placeholder if no songs are found
       songChooser.setDefaultOption("No songs found", "");
       SmartDashboard.putString("Song Error", "No music files found. Add .chrp files to deploy/music directory.");
     }

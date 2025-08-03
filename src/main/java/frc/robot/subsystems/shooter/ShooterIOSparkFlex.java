@@ -11,9 +11,7 @@ public class ShooterIOSparkFlex implements ShooterIO{
 
     @Override
     public void updateInputs(ShooterIOInputs inputs) {
-        inputs.motorTemperatureCelsius = shooterMotor.getMotorTemperature();
         inputs.appliedVolts = shooterMotor.getAppliedOutput() * shooterMotor.getBusVoltage();
-        inputs.currentAmps = shooterMotor.getOutputCurrent();
         inputs.motorOutputPercent = shooterMotor.getAppliedOutput();
         inputs.velocityRPM = shooterMotor.getEncoder().getVelocity() * 60.0; // Convert to RPM
         inputs.shooterSpeed = shooterMotor.get();
@@ -28,7 +26,6 @@ public class ShooterIOSparkFlex implements ShooterIO{
         shooterMotor.set(percent);
         
     }
-
 
     @Override
     public void stop() {

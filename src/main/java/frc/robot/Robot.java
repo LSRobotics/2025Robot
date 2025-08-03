@@ -4,12 +4,10 @@
 
 package frc.robot;
 
-import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
-import frc.robot.LegacyConstants.MultiversalConstants;
 
 import java.util.Timer;
 
@@ -62,11 +60,10 @@ public class Robot extends LoggedRobot {
     // }
     // }
 
-    Logger.addDataReceiver(new WPILOGWriter()); // Log to a USB stick ("/U/logs")
+    //Logger.addDataReceiver(new WPILOGWriter()); // Log to a USB stick ("/U/logs")
     Logger.addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
     Logger.start();
 
-    OtherLoggers.start(this, new PowerDistribution(1, PowerDistribution.ModuleType.kRev));
     // Instantiate our RobotContainer. This will perform all our button bindings,
     // and put our
     // autonomous chooser on the dashboard.

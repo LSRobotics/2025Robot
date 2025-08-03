@@ -1,6 +1,7 @@
 package frc.robot.subsystems.claw;
 
 import static edu.wpi.first.units.Units.Amps;
+import static edu.wpi.first.units.Units.Celsius;
 import static edu.wpi.first.units.Units.Radian;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecondPerSecond;
@@ -30,9 +31,6 @@ public class ClawIOTalonFX implements ClawIO {
     private final StatusSignal<AngularAcceleration> clawAcceleration = clawMotor.getAcceleration();
     private final StatusSignal<Temperature> clawMotorTemperature = clawMotor.getDeviceTemp();
 
-    private final VoltageOut voltageRequest = new VoltageOut(0.0);
-    private final double speedRequest = 0.0;
-
     public ClawIOTalonFX() {
         TalonFXConfigurator config = clawMotor.getConfigurator();
         CurrentLimitsConfigs limitConfig = new CurrentLimitsConfigs();
@@ -45,22 +43,23 @@ public class ClawIOTalonFX implements ClawIO {
 
     @Override
     public void updateInputs(ClawIOInputs inputs){
-        BaseStatusSignal.refreshAll(clawPosition, clawVelocity, clawMotorCurrent, clawVoltage, clawAcceleration);
+        BaseStatusSignal.refreshAll(clawPosition, clawVelocity, clawMotorCurrent, clawVoltage, clawAcceleration, clawMotorTemperature);
         inputs.clawPosition = clawPosition.getValue();
         inputs.clawVoltage = clawVoltage.getValue().in(Volts);
         inputs.clawMotorCurrent = clawMotorCurrent.getValue().in(Amps);
         inputs.clawVelocity = clawVelocity.getValue().in(RadiansPerSecond);
         inputs.clawMotorAcceleration = clawAcceleration.getValue().in(RadiansPerSecondPerSecond);
+        inputs.clawMotorTemperature = clawMotorTemperature.getValue();
     }
 
     @Override
     public void setClawMotorSpeed(double speed) {
-        clawMotor.set(speedRequest);
+        clawMotor.set(speed); 
     }
 
     @Override
     public void setClawVoltage(double voltage) {
-        clawMotor.setControl(voltageRequest.withOutput(voltage));
+        clawMotor.setControl(new VoltageOut(Volts.of(voltage)));
     }
 
 }

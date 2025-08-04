@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.LEDSubsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.RobotBase;
 
 import javax.sound.midi.*;
 import java.io.File;
@@ -15,13 +16,13 @@ import java.util.concurrent.*;
 
 public class PlayMidiCommand extends Command {
     // LED blinking parameters
-    private static final int VELOCITY_THRESHOLD = 100;         // minimum velocity to trigger a blink
+    private static final int VELOCITY_THRESHOLD = 105;         // minimum velocity to trigger a blink
     private static final int ALIGNMENT_TOLERANCE_TICKS = 20;   // ticks tolerance for alignment
     private static final int[] CANDIDATE_SUBDIVISIONS = {1, 2, 4}; // quarter, eighth, sixteenth note
     private static final int DEFAULT_BLINK_DURATION_MS = 50;   // defualt
     private static final double BLINK_DURATION_RATIO = 0.4;    // blink for 40 percent of interval
     private static final int MIN_BLINK_DURATION_MS = 30;       // min blink ms
-    private static final int MAX_BLINK_DURATION_MS = 150;      // max blink ms
+    private static final int MAX_BLINK_DURATION_MS = 250;      // max blink ms
     
     private static final int[] MOTOR_CAN_IDS = {
         2, 3, 4, 5, 6, 7, 8, 9, 31 // 9 motors
@@ -38,6 +39,9 @@ public class PlayMidiCommand extends Command {
     private String[] songPaths;
     private String[] songNames;
     private boolean isPlaying = false;
+
+    private Synthesizer synthesizer;
+    private boolean isSimulation;
 
     private record ScheduledNote(double frequency, long startMs, long durationMs) {}
     private record TempoChange(long tick, int tempo) {}
@@ -81,6 +85,9 @@ public class PlayMidiCommand extends Command {
         scanForMidiFiles();
         
         SmartDashboard.putData("MIDI Song Selector", songChooser);
+        
+        isSimulation = RobotBase.isSimulation();
+        SmartDashboard.putBoolean("MIDI Simulation Mode", isSimulation);
     }
     
     private void scanForMidiFiles() {
@@ -136,6 +143,17 @@ public class PlayMidiCommand extends Command {
             scheduler = Executors.newScheduledThreadPool(10);
         }
         
+        if (isSimulation) {
+            try {
+                synthesizer = MidiSystem.getSynthesizer();
+                synthesizer.open();
+                SmartDashboard.putString("MIDI Simulation", "Synthesizer initialized");
+            } catch (MidiUnavailableException e) {
+                System.err.println("Error initializing synthesizer: " + e.getMessage());
+                SmartDashboard.putString("MIDI Simulation", "Error: " + e.getMessage());
+            }
+        }
+        
         String selectedSong = songChooser.getSelected();
         
         if (selectedSong != null && !selectedSong.isEmpty()) {
@@ -143,6 +161,22 @@ public class PlayMidiCommand extends Command {
                 File midiFile = new File(Filesystem.getDeployDirectory(), selectedSong);
                 Sequence sequence = MidiSystem.getSequence(midiFile);
                 int resolution = sequence.getResolution(); // ticks per beat
+                
+                if (isSimulation && synthesizer != null && synthesizer.isOpen()) {
+                    try {
+                        Sequencer sequencer = MidiSystem.getSequencer(false);
+                        sequencer.open();
+                        sequencer.getTransmitter().setReceiver(synthesizer.getReceiver());
+                        
+                        sequencer.setSequence(sequence);
+                        sequencer.start();
+                        
+                        SmartDashboard.putString("MIDI Simulation", "Playing audio through speakers");
+                    } catch (MidiUnavailableException e) {
+                        System.err.println("Error playing MIDI audio: " + e.getMessage());
+                        SmartDashboard.putString("MIDI Simulation", "Audio error: " + e.getMessage());
+                    }
+                }
                 
                 TreeMap<Long, Integer> tempoMap = extractTempoMap(sequence);
                 
@@ -304,6 +338,11 @@ public class PlayMidiCommand extends Command {
         for (TalonFX motor : motors) {
             motor.setControl(new MusicTone(0)); // silence all motors
         }
+        
+        if (isSimulation && synthesizer != null && synthesizer.isOpen()) {
+            synthesizer.close();
+        }
+        
         safeShutdownScheduler(); // cancel pending events
         isPlaying = false;
     }

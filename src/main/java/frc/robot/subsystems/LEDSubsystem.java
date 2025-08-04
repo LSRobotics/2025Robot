@@ -23,6 +23,47 @@ public class LEDSubsystem extends SubsystemBase {
     public static final double colorGold = 0.67;
     public static final double twinklesColorOneAndTwo = 0.51;
     public static final long matchTimeInMilliseconds = 150_000;
+
+    public enum PWMToHexColor {
+      RED(0.61, "#FF0000"),
+      HOT_PINK(0.57, "#FF69B4"),
+      YELLOW(0.69, "#FFFF00"),
+      SKY_BLUE(0.83, "#87CEEB"),
+      BLUE_VIOLET(0.89, "#8A2BE2"),
+      WHITE(0.93, "#FFFFFF"),
+      LIME_GREEN(0.73, "#32CD32"),
+      ORANGE(0.65, "#FFA500"),
+      DARK_GREEN(0.75, "#006400"),
+      LAWN_GREEN(0.71, "#7CFC00"),
+      BLUE(0.87, "#0000FF"),
+      GOLD(0.67, "#FFD700");
+
+      private final double pwmValue;
+      private final String hexColor;
+
+      PWMToHexColor(double pwmValue, String hexColor) {
+        this.pwmValue = pwmValue;
+        this.hexColor = hexColor;
+      }
+
+      public double getPWMValue() {
+        return pwmValue;
+      }
+
+      public String getHexColor() {
+        return hexColor;
+      }
+
+      public static String getHexColorFromPWM(double pwmValue) {
+        final double TOLERANCE = 0.001; 
+        for (PWMToHexColor color : values()) {
+          if (Math.abs(color.getPWMValue() - pwmValue) < TOLERANCE) {
+            return color.getHexColor();
+          }
+        }
+        return "#000000"; 
+      }
+    }
   }
 
   private final Spark ledDriverOne;
@@ -45,6 +86,7 @@ public class LEDSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("LEDs/PulseDuration", pulseDurationMs);
     SmartDashboard.putNumber("LEDs/PreviousColor", previousColor);
     SmartDashboard.putBoolean("LEDs/UsePreviousColor", usePreviousColor);
+    SmartDashboard.putString("Current Color", LEDConstants.PWMToHexColor.getHexColorFromPWM(getLEDs()));
     
     if (isPulsing) {
       long now = System.currentTimeMillis();
@@ -65,6 +107,7 @@ public class LEDSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("LEDs/SetColor", color);
     ledDriverOne.set(color);
   }
+  
 
   public double getLEDs() {
     return ledDriverOne.get();

@@ -22,7 +22,7 @@ public class PlayMidiCommand extends Command {
     private static final int DEFAULT_BLINK_DURATION_MS = 50;   // defualt
     private static final double BLINK_DURATION_RATIO = 0.4;    // blink for 40 percent of interval
     private static final int MIN_BLINK_DURATION_MS = 30;       // min blink ms
-    private static final int MAX_BLINK_DURATION_MS = 250;      // max blink ms
+    private static final int MAX_BLINK_DURATION_MS = 350;      // max blink ms
     
     private static final int[] MOTOR_CAN_IDS = {
         2, 3, 4, 5, 6, 7, 8, 9, 31 // 9 motors
@@ -305,7 +305,7 @@ public class PlayMidiCommand extends Command {
                     final long finalBlinkDurationMs = blinkDurationMs;
                     
                     scheduler.schedule(() -> {
-                        m_LEDs.blink(finalBlinkDurationMs, blinkColor);
+                        m_LEDs.blink(finalBlinkDurationMs, blinkColor, LEDSubsystem.LEDConstants.colorOff);
                     }, blinkTimeMs, TimeUnit.MILLISECONDS);
                     
                     if (i == 0) {

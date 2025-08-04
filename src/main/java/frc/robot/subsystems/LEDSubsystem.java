@@ -21,6 +21,7 @@ public class LEDSubsystem extends SubsystemBase {
     public static final double colorLawnGreen = 0.71;
     public static final double colorBlue = 0.87;
     public static final double colorGold = 0.67;
+    public static final double colorOff = 0.0;
     public static final double twinklesColorOneAndTwo = 0.51;
     public static final long matchTimeInMilliseconds = 150_000;
 

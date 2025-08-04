@@ -6,7 +6,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 
 import com.ctre.phoenix6.Orchestra;
+import com.ctre.phoenix6.Orchestra;
 import com.ctre.phoenix6.StatusCode;
+import com.ctre.phoenix6.configs.AudioConfigs;
+import com.ctre.phoenix6.controls.MusicTone;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -27,6 +30,7 @@ public class playMusicCommand extends Command {
   private SendableChooser<String> songChooser;
   private String[] songPaths;
   private String[] songNames;
+  private AudioConfigs audioConfigs = new AudioConfigs().withAllowMusicDurDisable(true);
 
   private static final int[] MOTOR_CAN_IDS = {
     2, 3, 4, 5, 6, 7, 8, 9, // swerve
@@ -88,6 +92,7 @@ public class playMusicCommand extends Command {
   
   public playMusicCommand() {
     m_Orchestra = new Orchestra();
+
 
     for (int canId : MOTOR_CAN_IDS) {
       m_Orchestra.addInstrument(new TalonFX(canId, "rio"));

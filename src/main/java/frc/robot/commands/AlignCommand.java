@@ -1,91 +1,90 @@
 package frc.robot.commands;
 
+import frc.robot.subsystems.CommandSwerveDrivetrain;
+import org.photonvision.PhotonCamera;
+import org.photonvision.PhotonUtils;
 import com.ctre.phoenix6.swerve.SwerveRequest;
-
-import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants.VisionConstants;
+import edu.wpi.first.math.filter.SlewRateLimiter;
 
-import frc.robot.subsystems.CommandSwerveDrivetrain;
-import frc.robot.subsystems.VisionSubsystem;
-import frc.robot.subsystems.LimelightHelpers;
+public class alignCommand extends Command {
+    private final PhotonCamera camera = new PhotonCamera("Microsoft_LifeCam_HD-3000");
 
-public class AlignCommand extends Command {
-  private PIDController xController, yController, rotController;
-  private boolean isRightScore;
-  private VisionSubsystem m_Vision;
-  private Timer dontSeeTagTimer, stopTimer;
-  private CommandSwerveDrivetrain m_Swerve;
+    private final double fixedTurnSpeed = 0.3;
+    private final double fixedForwardSpeed = 0.5;
 
-  private static final SwerveRequest.RobotCentric alignRequest = new SwerveRequest.RobotCentric().withDriveRequestType(DriveRequestType.OpenLoopVoltage);
-  private static final SwerveRequest.Idle idleRequest = new SwerveRequest.Idle();
+    private final double desiredAngle = 0.0;
+    private final double desiredRange = 0.1;
 
+    private final double yawTolerance = 2.0;
+    private final double rangeTolerance = 1;
 
-  public AlignCommand(CommandSwerveDrivetrain swerve, VisionSubsystem limelight, boolean isRightScore) {
-    xController = new PIDController(VisionConstants.X_REEF_ALIGNMENT_P, 0, 0);  // Vertical movement
-    yController = new PIDController(VisionConstants.Y_REEF_ALIGNMENT_P, 0, 0);  // Horitontal movement
-    rotController = new PIDController(VisionConstants.ROT_REEF_ALIGNMENT_P, 0, 0);  // Rotation
-    this.isRightScore = isRightScore;
-    this.m_Vision = limelight;
-    this.m_Swerve = swerve;
-    addRequirements(swerve, limelight);
-  }
+    private double targetYaw = 0.0;
+    private double targetRange = 0.0;
 
-  @Override
-  public void initialize() {
-    this.stopTimer = new Timer();
-    this.stopTimer.start();
-    this.dontSeeTagTimer = new Timer();
-    this.dontSeeTagTimer.start();
+    private final SlewRateLimiter yawLimiter = new SlewRateLimiter(7.5);
+    private double smoothedYaw = 0.0;
+    private boolean targetVisible = false;
 
-    rotController.setSetpoint(VisionConstants.ROT_SETPOINT_REEF_ALIGNMENT);
-    rotController.setTolerance(VisionConstants.ROT_TOLERANCE_REEF_ALIGNMENT);
+    private final SwerveRequest.RobotCentric swerveRequest = new SwerveRequest.RobotCentric()
+            .withDriveRequestType(com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType.OpenLoopVoltage);
 
-    xController.setSetpoint(VisionConstants.X_SETPOINT_REEF_ALIGNMENT);
-    xController.setTolerance(VisionConstants.X_TOLERANCE_REEF_ALIGNMENT);
+    private final CommandSwerveDrivetrain mSwerve;
 
-    yController.setSetpoint(isRightScore ? VisionConstants.Y_SETPOINT_REEF_ALIGNMENT : -VisionConstants.Y_SETPOINT_REEF_ALIGNMENT);
-    yController.setTolerance(VisionConstants.Y_TOLERANCE_REEF_ALIGNMENT);
-  }
-
-  @Override
-  public void execute() {
-    if (m_Vision.getTV()) {
-      this.dontSeeTagTimer.reset();
-
-      double[] postions = LimelightHelpers.getBotPose_TargetSpace("");
-      SmartDashboard.putNumber("x", postions[2]);
-      
-      double xSpeed = xController.calculate(postions[2]);
-      //SmartDashboard.putNumber("xspee", xSpeed);
-      double ySpeed = -yController.calculate(postions[0]);
-      double rotValue = rotController.calculate(postions[4]);
-      m_Swerve.setControl(alignRequest.withVelocityX(yController.getError() < VisionConstants.Y_TOLERANCE_REEF_ALIGNMENT ? xSpeed : 0).withRotationalRate(rotValue).withVelocityY(ySpeed));
-
-      m_Swerve.setControl(alignRequest.withVelocityX(yController.getError() < VisionConstants.Y_TOLERANCE_REEF_ALIGNMENT ? 0 : 0).withRotationalRate(rotValue).withVelocityY(ySpeed));
-
-
-      if (!rotController.atSetpoint() ||
-          !yController.atSetpoint() ){//||
-          //!xController.atSetpoint()) {
-        stopTimer.reset();
-      }
-    } else {
-      m_Swerve.setControl(idleRequest);
+    public alignCommand(CommandSwerveDrivetrain mSwerve) {
+        this.mSwerve = mSwerve;
     }
-  }
 
-  @Override
-  public void end(boolean interrupted) {
-    m_Swerve.setControl(idleRequest);
-  }
+    @Override
+    public void execute() {
 
-  @Override
-  public boolean isFinished() { 
-    return this.dontSeeTagTimer.hasElapsed(VisionConstants.waitTime) ||
-        stopTimer.hasElapsed(VisionConstants.validationTime);
-  }
+        var results = camera.getLatestResult();
+        targetVisible = false;
+
+        if (results.hasTargets()) {
+            for (var target : results.getTargets()) {
+                if (target.getFiducialId() == 5) {
+                    targetYaw = target.getYaw();
+                    targetRange = PhotonUtils.calculateDistanceToTargetMeters(
+                            0.5, 0.0, 0.0, Math.toRadians(target.getPitch()));
+                    targetVisible = true;
+                }
+            }
+        } 
+        else {
+            targetVisible = false;
+            mSwerve.setControl(swerveRequest.withVelocityX(0).withVelocityY(0).withRotationalRate(0));
+        }
+
+        if (!targetVisible) {
+            return;
+        }
+
+        smoothedYaw = yawLimiter.calculate(targetYaw);
+
+        double yawError = desiredAngle - smoothedYaw;
+        double turn = Math.abs(yawError) < yawTolerance ? 0.0 : (yawError > 0 ? fixedTurnSpeed : -fixedTurnSpeed);
+
+        double rangeError = desiredRange - targetRange;
+        double forward = Math.abs(rangeError) < rangeTolerance ? 0.0
+                : (rangeError > 0 ? fixedForwardSpeed : -fixedForwardSpeed);
+
+        mSwerve.setControl(
+                swerveRequest
+                        .withVelocityY(-forward)
+                        .withRotationalRate(turn));
+
+        SmartDashboard.putBoolean("Vision Target Visible", targetVisible);
+        SmartDashboard.putNumber("Vision Target Range (m)", targetRange);
+        SmartDashboard.putNumber("Vision Target Yaw (deg)", targetYaw);
+        SmartDashboard.putNumber("Smoothed Yaw", smoothedYaw);
+        SmartDashboard.putNumber("Turn Command", turn);
+        SmartDashboard.putNumber("Forward Command", forward);
+    }
+
+    @Override
+    public boolean isFinished() {
+        return false;
+    }
 }
